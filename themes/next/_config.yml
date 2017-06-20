@@ -316,8 +316,8 @@ han: false
 
 # Disqus
 disqus:
-  enable: true
-  shortname: xymj
+  enable: false
+  shortname: 
   count: true
 
 # Hypercomments
