@@ -3,9 +3,9 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: BLOG
-subtitle:
-description:
+title: PikachuBLOG
+subtitle: 
+description: 含泪播种一定能含笑收获
 author: CodePikachu 
 language: zh-Hans
 timezone:
@@ -70,3 +70,9 @@ theme: next
 deploy:
   type: git
   repo: https://github.com/xymj/xymj.github.io.git
+  
+search:
+  path: search.xml
+  field: post
+  format: html
+  limit: 10000
