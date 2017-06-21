@@ -23,7 +23,7 @@ categories:
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;C++代码实现如下：
 
-```
+{% codeblock lang:c++ %}
 //1、进行区域的划分
 int getPartition(vector<int> &nums, int low, int height)
 {
@@ -52,7 +52,7 @@ void quickSort(vector<int> &nums,int low,int height) {
 		quickSort(nums, mid + 1, height);
 	}
 }
-```
+{% endcodeblock %}
 
 
 # 思路二：
@@ -75,7 +75,7 @@ void quickSort(vector<int> &nums,int low,int height) {
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;C++代码实现如下：
 
-```
+{% codeblock lang:c++ %}
 //1、进行区域的划分
 int getPartition(vector<int> &nums, int low, int height)
 {
@@ -103,7 +103,7 @@ void quickSort(vector<int> &nums,int low,int height) {
 		quickSort(nums, mid + 1, height);
 	}
 }
-```
+{% endcodeblock %}
 
 
 
@@ -111,7 +111,7 @@ void quickSort(vector<int> &nums,int low,int height) {
 # 最后呈上快速排序的非递归实现：
 -------------------
 
-```
+{% codeblock lang:c++ %}
 void quickSortNonRecursive(vector<int> &nums, int low, int height)
 {
 	stack<int> s;
@@ -150,7 +150,7 @@ void quickSortNonRecursive(vector<int> &nums, int low, int height)
 
 	}
 }
-```
+{% endcodeblock %}
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;其实经过测试非递归的算法比递归实现还要慢。 因为递归算法使用的栈由程序自动产生，栈中包含：函数调用时的参数和函数中的局部变量。如果局部变量很多或者函数内部又调用了其他函数，则栈会很大。每次递归调用都要操作很大的栈，效率自然会下降。而对于非递归算法，每次循环使用自己预先创建的栈，因此不管程序复杂度如何，都不会影响程序效率。但是对于上面的快速排序，由于局部变量只有一个mid，栈很小，所以效率并不比非递归实现的低。
 
