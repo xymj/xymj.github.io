@@ -12,6 +12,8 @@ Given n non-negative integers a1, a2, ..., an, where each represents a point at 
 
 Note: You may not slant the container and n is at least 2. 
 
+<!-- more -->
+
 ## 题意：
 
 　　数组索引代表x轴坐标，数组元素值代表y轴索引，经过此点坐标做垂直于x轴的线段，求这样的线段，以及x轴围起来的容器能存储的最多的水。
