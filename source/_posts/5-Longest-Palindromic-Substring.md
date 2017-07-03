@@ -2,7 +2,7 @@
 title: 5. Longest Palindromic Substring
 date: 2017-06-28 17:40:22
 tags: LeetCode
-categories: LeetCoe
+categories: LeetCode
 ---
 
 # 5. Longest Palindromic Substring
@@ -21,9 +21,9 @@ Given a string S, find the longest palindromic substring in S. You may assume th
 
 　　判断一个字符串是否是回文串，主要有两种方式判断：
 
-　　　　1. 两个指针从两端到中间，如果左右指针不出现不相等的字符，则此字符串是回文串。
+    　　　　1. 两个指针从两端到中间，如果左右指针不出现不相等的字符，则此字符串是回文串。
 
-　　　　2. 两个指针从中间到两端，即中心扩展法，如果左右指针不出现不相等的字符，则此字符串是回文串，注意此方法回文字符串字符数分为奇、偶两种类型。
+    　　　　2. 两个指针从中间到两端，即中心扩展法，如果左右指针不出现不相等的字符，则此字符串是回文串，注意此方法回文字符串字符数分为奇、偶两种类型。
 
 　　此题主要采用方法二，从前往后遍历字符串，每个字符都有可能是回文字符串的中点。依次求得各字符作为中心的回文字符串，取其中最长的那个即是结果。
 
