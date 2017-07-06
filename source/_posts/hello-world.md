@@ -1,5 +1,6 @@
 ---
 title: Hello World
+date: 2017-06-19 18:38:39
 comments: true
 tags: [Hexo]
 categories: 

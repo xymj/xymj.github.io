@@ -1,5 +1,6 @@
 ---
 title: 测试分类和标签
+date: 2017-06-19 18:38:39
 tags: [Hexo]
 categories: 
 - Hexo

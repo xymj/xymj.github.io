@@ -1,5 +1,6 @@
 ---
 title: 我的博客
+date: 2017-06-19 23:39:39
 tags: [Hexo]
 categories: 
 - Hexo
