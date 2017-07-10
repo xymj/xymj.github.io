@@ -24,7 +24,7 @@ Your algorithm should use only constant space.You may not modify the values in t
 
 ### 　方法一：
 
-　　主要是构造临时头结点，因为LeetCode中构造的链表是不带头结点的，自己构造头结点可以完成一边遍历链表，一边交换两个相邻节点，关机就是利用三个指针分别记录三个节点，temp记录要反转的两个节点的前一个节点，p指向要反转的前一个节点，q指向后一个，这样一边往前遍历，一边改变next指针的指向。
+　　主要是构造临时头结点，因为LeetCode中构造的链表是不带头结点的，自己构造头结点可以完成一边遍历链表，一边交换两个相邻节点，关键就是利用三个指针分别记录三个节点，temp记录要反转的两个节点的前一个节点，p指向要反转的前一个节点，q指向后一个，这样一边往前遍历，一边改变next指针的指向。
 
 ```c++
 /**
@@ -86,7 +86,6 @@ public:
       ListNode* temp = head->next;
       head->next = swapPairs(temp->next);
       temp->next = head;
-
       return temp;
     }
 };
