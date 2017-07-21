@@ -39,7 +39,7 @@ class Solution {
 	
 public:
 	vector<vector<int>> res;
-	vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {
+	vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
 		vector<int> sumNum;
 		sort(candidates.begin(), candidates.end());
 		backtracking(candidates, target, 0, 0, sumNum);
