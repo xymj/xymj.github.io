@@ -9,7 +9,7 @@ categories: LeetCode
 
 Follow up for N-Queens problem.
 
-![52-8-queens](images/52-8-queens.png)
+![52-8-queens](/images/52-8-queens.png)
 
 Now, instead outputting board configurations, return the total number of distinct solutions.
 
