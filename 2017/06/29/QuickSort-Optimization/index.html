@@ -1,0 +1,1343 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Algorithm," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="PikachuBLOG" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="快速排序的思想是分治法，当每次划分时，算法若都能分成两个等长的子序列时，那么分治算法效率会达到最大。所以基准枢纽元的选择是很重要，选择基准的方式决定了分割后两个子序列的长度，进而对整个算法的效率产生决定性影响。　　通常实现的快速排序没有经过充分考虑的选择那个枢纽元，只是将第一个或最后一个元素用作枢纽元。选择第一个元素作为枢纽元的程序例子见快速排序的两种实现思路二,选择最后一个元素作为枢纽元的程">
+<meta name="keywords" content="Algorithm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="快速排序优化">
+<meta property="og:url" content="http://yoursite.com/2017/06/29/QuickSort-Optimization/index.html">
+<meta property="og:site_name" content="PikachuBLOG">
+<meta property="og:description" content="快速排序的思想是分治法，当每次划分时，算法若都能分成两个等长的子序列时，那么分治算法效率会达到最大。所以基准枢纽元的选择是很重要，选择基准的方式决定了分割后两个子序列的长度，进而对整个算法的效率产生决定性影响。　　通常实现的快速排序没有经过充分考虑的选择那个枢纽元，只是将第一个或最后一个元素用作枢纽元。选择第一个元素作为枢纽元的程序例子见快速排序的两种实现思路二,选择最后一个元素作为枢纽元的程">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-04-07T14:44:08.897Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="快速排序优化">
+<meta name="twitter:description" content="快速排序的思想是分治法，当每次划分时，算法若都能分成两个等长的子序列时，那么分治算法效率会达到最大。所以基准枢纽元的选择是很重要，选择基准的方式决定了分割后两个子序列的长度，进而对整个算法的效率产生决定性影响。　　通常实现的快速排序没有经过充分考虑的选择那个枢纽元，只是将第一个或最后一个元素用作枢纽元。选择第一个元素作为枢纽元的程序例子见快速排序的两种实现思路二,选择最后一个元素作为枢纽元的程">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":0,"b2t":true,"scrollpercent":true},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/06/29/QuickSort-Optimization/"/>
+
+
+
+
+
+  <title>快速排序优化 | PikachuBLOG</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">PikachuBLOG</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/29/QuickSort-Optimization/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="CodePikachu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PikachuBLOG">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">快速排序优化</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-29T23:09:00+08:00">
+                2017-06-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Algorithm/" itemprop="url" rel="index">
+                    <span itemprop="name">Algorithm</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/06/29/QuickSort-Optimization/" class="leancloud_visitors" data-flag-title="快速排序优化">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计</span>
+                
+                <span title="字数统计">
+                  2,992
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  13
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>　　快速排序的思想是分治法，当每次划分时，算法若都能分成两个等长的子序列时，那么分治算法效率会达到最大。所以基准枢纽元的选择是很重要，选择基准的方式决定了分割后两个子序列的长度，进而对整个算法的效率产生决定性影响。<br>　　通常实现的快速排序没有经过充分考虑的选择那个枢纽元，只是将第一个或最后一个元素用作枢纽元。选择第一个元素作为枢纽元的程序例子见<a href="http://blog.taoaili999.cn/2017/06/20/QuickSort-implement-with-C++/" target="_blank" rel="noopener">快速排序的两种实现思路二</a>,选择最后一个元素作为枢纽元的程序例子见<a href="http://blog.taoaili999.cn/2017/06/20/QuickSort-implement-with-C++/" target="_blank" rel="noopener">快速排序的两种实现思路一</a></p>
+<a id="more"></a>
+<h1 id="快速排序枢纽元选择的优化方法"><a href="#快速排序枢纽元选择的优化方法" class="headerlink" title="快速排序枢纽元选择的优化方法"></a>快速排序枢纽元选择的优化方法</h1><h2 id="方法一：随机选取枢纽元"><a href="#方法一：随机选取枢纽元" class="headerlink" title="方法一：随机选取枢纽元"></a>方法一：随机选取枢纽元</h2><p>　　如果输入序列是随机的，那么固定枢纽元为第一个或者最后一个这是可以接受的，但是如果输入是预排序的或者是反序的，那么固定枢纽元就产生一个劣质的分割，因为所有的元素不是被划入S1就是被划入S2。更有甚者，这种情况发生在所有的递归调用中。<br>　　实际上，如果第一个元素用作枢纽元而且输入是预先排序的，那么快速排序的时间复杂度为Θ(n^2)。然而，预排序的输入(或者有一大段预排序数据的输入)也是相当常见的，因此，使用第一个元素作为枢纽元的算法效率不是很高的。<br>　　随机选取枢纽元是相对安全的策略。由于枢轴的位置是随机的，那么产生的分割也不会总是会出现劣质的分割。在整个数组数字全相等时，仍然是最坏情况，时间复杂度是O(n^2）。实际上，随机化快速排序得到理论最坏情况的可能性仅为1/(2^n）。所以随机化快速排序可以对于绝大多数输入数据达到O(nlogn）的期望时间复杂度。</p>
+<h3 id="随机选取枢纽元算法："><a href="#随机选取枢纽元算法：" class="headerlink" title="　　随机选取枢纽元算法："></a>　　随机选取枢纽元算法：</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//随机选取枢纽元</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">getRandomPivot</span><span class="params">(<span class="keyword">int</span> low,<span class="keyword">int</span> height)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">//主要是利用随机数，随机的获取数组中的一个元素做为主元</span></span><br><span class="line">	<span class="keyword">int</span> size = height - low + <span class="number">1</span>;</span><br><span class="line">	<span class="keyword">int</span> index = low + rand() % size;</span><br><span class="line">	<span class="keyword">return</span> index;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//随机枢纽元放到第一个元素的getPartition划分过程</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">getPartitionOptimize1</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; &amp;nums, <span class="keyword">int</span> low, <span class="keyword">int</span> height)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">//主要是利用随机数，随机的获取数组中的一个元素做为枢纽元</span></span><br><span class="line">	<span class="keyword">int</span> index =getRandomPivot(low,height);</span><br><span class="line">  </span><br><span class="line">	swap(nums[low], nums[index]);<span class="comment">//交换第一个元素和随机枢纽元</span></span><br><span class="line">	<span class="keyword">int</span> keyVal = nums[low];</span><br><span class="line">	<span class="keyword">while</span> (low&lt;height)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">while</span> (low&lt;height&amp;&amp;nums[height]&gt;=keyVal)</span><br><span class="line">		&#123;</span><br><span class="line">			height--;</span><br><span class="line">		&#125;</span><br><span class="line">		nums[low] = nums[height];</span><br><span class="line">		<span class="keyword">while</span> (low&lt;height&amp;&amp;nums[low]&lt;=keyVal)</span><br><span class="line">		&#123;</span><br><span class="line">			low++;</span><br><span class="line">		&#125;</span><br><span class="line">		nums[height] = nums[low];</span><br><span class="line">	&#125;</span><br><span class="line">	nums[low] = keyVal;</span><br><span class="line">	<span class="keyword">return</span> low;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//随机枢纽元放到最后一个元素的getPartition划分过程</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">getPartitionOptimizer2</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; &amp;nums, <span class="keyword">int</span> low, <span class="keyword">int</span> height)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">//主要是利用随机数，随机的获取数组中的一个元素做为枢纽元</span></span><br><span class="line">	<span class="keyword">int</span> index =getRandomPivot(low,height);</span><br><span class="line"></span><br><span class="line">	swap(nums[height], nums[index]);<span class="comment">//交换最后一个元素和随机枢纽元</span></span><br><span class="line">	<span class="keyword">int</span> keyVal = nums[height];</span><br><span class="line">	<span class="keyword">int</span> i = low - <span class="number">1</span>;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> j = low;j&lt;height;j++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span> (nums[j]&lt;=keyVal)</span><br><span class="line">		&#123;</span><br><span class="line">			i = i + <span class="number">1</span>;</span><br><span class="line">			swap(nums[j], nums[i]);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	swap(nums[i + <span class="number">1</span>], nums[height]);</span><br><span class="line">	<span class="keyword">return</span> i+<span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="方法二：三数取中分割法选取枢纽元"><a href="#方法二：三数取中分割法选取枢纽元" class="headerlink" title="方法二：三数取中分割法选取枢纽元"></a>方法二：三数取中分割法选取枢纽元</h2><p>　　虽然随机选取枢轴时，减少出现不好分割的几率，但是最坏情况下还是O(n^2），要缓解这种情况，就引入了三数取中选取枢纽，一组N个数的中值是第[N/2]个最大的数。枢纽元的最好的选择是数组的中值。可是，这很难算出来，并且会明显减慢快速排序的速度。这样的中值的估计可以通过随机选取三个元素并用它们的中值作为枢纽元而得到。事实上，随机性并没有多大的帮助，因此一般的做法是使用左端、右端和中心位置上的三个元素的中值作为枢纽元。显然使用三数中值分割法消除了预排序输入的不好情形。</p>
+<h3 id="三数取中分割法枢纽元算法："><a href="#三数取中分割法枢纽元算法：" class="headerlink" title="　　三数取中分割法枢纽元算法："></a>　　三数取中分割法枢纽元算法：</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//三数取中分割法:通过确定nums[low], nums[mid], nums[height]三者之中的那个第二大的元素为枢纽元时，便能尽最大限度保证快速排序算法不会出现O（N ^ 2）的最坏情况。。</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">getMedianOfThreePivot</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; &amp;nums, <span class="keyword">int</span> low, <span class="keyword">int</span> height)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">//主要是利用三元区中值，随机的获取数组中的一个元素做为枢纽元</span></span><br><span class="line">	<span class="keyword">int</span> mid = (low + height) / <span class="number">2</span>;</span><br><span class="line">	<span class="comment">//首先把三元素中的最小的元素交换到中间</span></span><br><span class="line">	<span class="keyword">if</span> (nums[low] &lt; nums[mid])</span><br><span class="line">		swap(nums[low], nums[mid]);</span><br><span class="line">	<span class="keyword">if</span> (nums[height] &lt; nums[mid])</span><br><span class="line">		swap(nums[height], nums[mid]);</span><br><span class="line">	<span class="comment">//在比较两个较大的元素，把最小的放到最左边位置，即为三数中值</span></span><br><span class="line">	<span class="keyword">if</span> (nums[height] &lt; nums[low])</span><br><span class="line">		swap(nums[height], nums[low]);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//三数取中分割法枢纽元放到第一个元素的getPartition划分过程</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">getPartitionOptimize1</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; &amp;nums, <span class="keyword">int</span> low, <span class="keyword">int</span> height)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	getMedianOfThreePivot(nums,low,height);<span class="comment">//确定枢纽元</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">int</span> keyVal = nums[low];</span><br><span class="line">	<span class="keyword">while</span> (low &lt; height)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">while</span> (low &lt; height&amp;&amp;nums[height] &gt;= keyVal)</span><br><span class="line">		&#123;</span><br><span class="line">			height--;</span><br><span class="line">		&#125;</span><br><span class="line">		nums[low] = nums[height];</span><br><span class="line">		<span class="keyword">while</span> (low &lt; height&amp;&amp;nums[low] &lt;= keyVal)</span><br><span class="line">		&#123;</span><br><span class="line">			low++;</span><br><span class="line">		&#125;</span><br><span class="line">		nums[height] = nums[low];</span><br><span class="line">	&#125;</span><br><span class="line">	nums[low] = keyVal;</span><br><span class="line">	<span class="keyword">return</span> low;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//三数取中分割法枢纽元放到最后一个元素的getPartition划分过程</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">getPartitionOptimizer4</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; &amp;nums, <span class="keyword">int</span> low, <span class="keyword">int</span> height)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	getMedianOfThreePivot(nums,low,height);<span class="comment">//确定枢纽元</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">int</span> keyVal = nums[height];</span><br><span class="line">	<span class="keyword">int</span> i = low - <span class="number">1</span>;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> j = low; j &lt; height; j++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span> (nums[j] &lt;= keyVal)</span><br><span class="line">		&#123;</span><br><span class="line">			i = i + <span class="number">1</span>;</span><br><span class="line">			swap(nums[j], nums[i]);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	swap(nums[i + <span class="number">1</span>], nums[height]);</span><br><span class="line">	<span class="keyword">return</span> i + <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="枢纽元确定后递归快排函数优化方法"><a href="#枢纽元确定后递归快排函数优化方法" class="headerlink" title="枢纽元确定后递归快排函数优化方法"></a>枢纽元确定后递归快排函数优化方法</h1><h2 id="方法一：当待排序序列的长度分割到一定大小后，使用插入排序"><a href="#方法一：当待排序序列的长度分割到一定大小后，使用插入排序" class="headerlink" title="方法一：当待排序序列的长度分割到一定大小后，使用插入排序"></a>方法一：当待排序序列的长度分割到一定大小后，使用插入排序</h2><p>　　对于很小和部分有序的数组，快排不如插排好。当待排序序列的长度分割到一定大小后，继续分割的效率比插入排序要差，此时可以使用插排而不是快排．截止范围：待排序序列长度N &lt; 10，进行插入排序，而不是继续划分快排。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//利用插入排序优化</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">insertSort</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; &amp;nums, <span class="keyword">int</span> low, <span class="keyword">int</span> height)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = low; i &lt;= height; i++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">int</span> key = nums[i];</span><br><span class="line">		<span class="keyword">int</span> j = i - <span class="number">1</span>;</span><br><span class="line">		<span class="keyword">while</span> (j &gt;= low &amp;&amp; key &lt; nums[j])</span><br><span class="line">		&#123;</span><br><span class="line">			nums[j + <span class="number">1</span>] = nums[j];</span><br><span class="line">			j--;</span><br><span class="line">		&#125;</span><br><span class="line">		nums[j + <span class="number">1</span>] = key;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//递归快排函数通过加入插入排序进行优化</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">quickSortOptimize</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; &amp;nums, <span class="keyword">int</span> low, <span class="keyword">int</span> height)</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (height - low + <span class="number">1</span> &lt; <span class="number">10</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		insertSort(nums, low, height);</span><br><span class="line">		<span class="keyword">return</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">int</span> mid = getPartitionOptimize1(nums, low, height);</span><br><span class="line">		quickSort(nums, low, mid - <span class="number">1</span>);</span><br><span class="line">		quickSort(nums, mid + <span class="number">1</span>, height);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="方法二：在一次分割结束后，可以把与枢纽元相等的元素聚在一起，继续下次分割时，不用再对与枢纽元相等元素分割"><a href="#方法二：在一次分割结束后，可以把与枢纽元相等的元素聚在一起，继续下次分割时，不用再对与枢纽元相等元素分割" class="headerlink" title="方法二：在一次分割结束后，可以把与枢纽元相等的元素聚在一起，继续下次分割时，不用再对与枢纽元相等元素分割"></a>方法二：在一次分割结束后，可以把与枢纽元相等的元素聚在一起，继续下次分割时，不用再对与枢纽元相等元素分割</h2><h3 id="举例："><a href="#举例：" class="headerlink" title="　举例："></a>　举例：</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">举例：待排序序列 <span class="number">1</span> <span class="number">4</span> <span class="number">6</span> <span class="number">7</span> <span class="number">6</span> <span class="number">6</span> <span class="number">7</span> <span class="number">6</span> <span class="number">8</span> <span class="number">6</span></span><br><span class="line">三数取中选取枢轴：下标为<span class="number">4</span>的数<span class="number">6</span></span><br><span class="line">转换后，待分割序列：<span class="number">6</span> <span class="number">4</span> <span class="number">6</span> <span class="number">7</span> <span class="number">1</span> <span class="number">6</span> <span class="number">7</span> <span class="number">6</span> <span class="number">8</span> <span class="number">6</span>	</span><br><span class="line">枢纽元key：<span class="number">6</span></span><br><span class="line">本次划分后，未对与key元素相等处理的结果：<span class="number">1</span> <span class="number">4</span> <span class="number">6</span> <span class="number">6</span> <span class="number">7</span> <span class="number">6</span> <span class="number">7</span> <span class="number">6</span> <span class="number">8</span> <span class="number">6</span></span><br><span class="line">下次的两个子序列为：<span class="number">1</span> <span class="number">4</span> <span class="number">6</span> 和 <span class="number">7</span> <span class="number">6</span> <span class="number">7</span> <span class="number">6</span> <span class="number">8</span> <span class="number">6</span></span><br><span class="line">本次划分后，对与key元素相等处理的结果：<span class="number">1</span> <span class="number">4</span> <span class="number">6</span> <span class="number">6</span> <span class="number">6</span> <span class="number">6</span> <span class="number">6</span> <span class="number">7</span> <span class="number">8</span> <span class="number">7</span></span><br><span class="line">下次的两个子序列为：<span class="number">1</span> <span class="number">4</span> 和 <span class="number">7</span> <span class="number">8</span> <span class="number">7</span></span><br><span class="line">经过对比，我们可以看出，在一次划分后，把与key相等的元素聚在一起，能减少迭代次数，效率会提高不少</span><br></pre></td></tr></table></figure>
+<h3 id="具体实现过程分为两步："><a href="#具体实现过程分为两步：" class="headerlink" title="　具体实现过程分为两步："></a>　具体实现过程分为两步：</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">第一步，在划分过程中，把与枢纽元key相等元素放入数组的两端</span><br><span class="line">第二步，划分结束后，把与枢纽元key相等的元素移到枢纽元周围</span><br></pre></td></tr></table></figure>
+<h3 id="具体代码实现："><a href="#具体代码实现：" class="headerlink" title="　具体代码实现："></a>　具体代码实现：</h3><p>　　　枢纽元通过三数取中分割法后放在第一个元素，此法是从左右两边分别向中间靠拢，所以和枢纽元相等的值会出现在枢纽元左右两边，因此需要左右两边都进行相等枢纽元的聚集。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;  getPartitionGatherKey(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; &amp;nums, <span class="keyword">int</span> low, <span class="keyword">int</span> height)</span><br><span class="line">&#123;</span><br><span class="line">	getMedianOfThreePivot(nums, low, height);<span class="comment">//转换枢纽元</span></span><br><span class="line">	<span class="keyword">int</span> tmpLow = low;</span><br><span class="line">	<span class="keyword">int</span> tmpHeight = height;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">int</span> left = low;</span><br><span class="line">	<span class="keyword">int</span> right = height;</span><br><span class="line">	<span class="keyword">int</span> leftCommonNum = <span class="number">0</span>;<span class="comment">//记录左侧和枢纽元相等的元素个数</span></span><br><span class="line">	<span class="keyword">int</span> rightCommonNum = <span class="number">0</span>;<span class="comment">//记录右侧和枢纽元相等的元素个数</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">//第一步：划分的过程中把与枢纽元相等的元素分散到数组的两端</span></span><br><span class="line">	<span class="keyword">int</span> keyVal = nums[low];</span><br><span class="line">	<span class="keyword">while</span> (low &lt; height)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">while</span> (low &lt; height &amp;&amp; nums[height] &gt;= keyVal)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">if</span> (nums[height] == keyVal)</span><br><span class="line">			&#123;</span><br><span class="line">				swap(nums[height], nums[right]);<span class="comment">//相等元素放到右端</span></span><br><span class="line">				--right;</span><br><span class="line">				++rightCommonNum;</span><br><span class="line">			&#125;</span><br><span class="line">			--height;</span><br><span class="line">		&#125;</span><br><span class="line">		nums[low] = nums[height];</span><br><span class="line">		<span class="keyword">while</span> (low &lt; height &amp;&amp; nums[low] &lt;= keyVal)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">if</span> (nums[low] == keyVal)</span><br><span class="line">			&#123;</span><br><span class="line">				swap(nums[low], nums[left]);<span class="comment">//相等元素放到左端</span></span><br><span class="line">				++left;</span><br><span class="line">				++leftCommonNum;</span><br><span class="line">			&#125;</span><br><span class="line">			++low;</span><br><span class="line">		&#125;</span><br><span class="line">		nums[height] = nums[low];</span><br><span class="line">	&#125;</span><br><span class="line">	nums[low] = keyVal;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//第二步：划分结束后，把与keyVal相等的元素移到枢纽轴（也就是枢纽元素）的两边</span></span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = low <span class="number">-1</span>,j = tmpLow;j &lt; left;j++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span> (nums[i] != keyVal)</span><br><span class="line">			swap(nums[j], nums[i]);</span><br><span class="line">		--i;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = low + <span class="number">1</span>, j = tmpHeight; j &gt; right; j--)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span> (nums[i] != keyVal)</span><br><span class="line">			swap(nums[j], nums[i]);</span><br><span class="line">		++i;</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="comment">//计算划分区域的索引</span></span><br><span class="line">	<span class="keyword">int</span> partitionLeftIndex = low - <span class="number">1</span> - leftCommonNum;</span><br><span class="line">	<span class="keyword">int</span> partitionRighttIndex = low + <span class="number">1</span> + rightCommonNum;</span><br><span class="line">	<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; partitionIndex;</span><br><span class="line">	partitionIndex.push_back(partitionLeftIndex);</span><br><span class="line">	partitionIndex.push_back(partitionRighttIndex);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> partitionIndex;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">quickSortGatherKey</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; &amp;nums, <span class="keyword">int</span> low, <span class="keyword">int</span> height)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (height - low + <span class="number">1</span> &lt; <span class="number">10</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		insertSort(nums, low, height);</span><br><span class="line">		<span class="keyword">return</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; partitionIndex = getPartitionGatherKey(nums, low, height);</span><br><span class="line">		quickSortGatherKey(nums, low, partitionIndex[<span class="number">0</span>]);</span><br><span class="line">		quickSortGatherKey(nums, partitionIndex[<span class="number">1</span>], height);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>　　　枢纽元通过三数取中分割法后放在最后一个元素，此法枢纽元左边都是小于等于枢纽元的元素，右边都是大于枢纽元的元素，所以和枢纽元相等的值只会出现在枢纽元左两边，因此只需要左边进行相等枢纽元的聚集。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; getPartitionGatherKey(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; &amp;nums, <span class="keyword">int</span> low, <span class="keyword">int</span> height)</span><br><span class="line">&#123;</span><br><span class="line">	getMedianOfThreePivot(nums, low, height);<span class="comment">//</span></span><br><span class="line">	swap(nums[height], nums[low]);<span class="comment">//三数取中分割法后枢纽元在最左端，需放到最后一个元素处</span></span><br><span class="line">	<span class="keyword">int</span> tmpLow = low;</span><br><span class="line">	<span class="keyword">int</span> left = low;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">int</span> leftCommonNum = <span class="number">0</span>;<span class="comment">//记录左侧和枢纽元相等的元素个数</span></span><br><span class="line">	</span><br><span class="line">	<span class="comment">//第一步：划分的过程中把与枢纽元相等的元素分散到数组的左端</span></span><br><span class="line">	<span class="keyword">int</span> keyVal = nums[height];</span><br><span class="line">	<span class="keyword">int</span> i = low - <span class="number">1</span>;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> j = low; j &lt; height; j++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span> (nums[j] &lt;= keyVal)</span><br><span class="line">		&#123;</span><br><span class="line">			i = i + <span class="number">1</span>;</span><br><span class="line">			swap(nums[j], nums[i]);</span><br><span class="line">			<span class="keyword">if</span> (nums[i] == keyVal)</span><br><span class="line">			&#123;</span><br><span class="line">				swap(nums[left], nums[i]);</span><br><span class="line">				++left;</span><br><span class="line">				++leftCommonNum;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	swap(nums[i + <span class="number">1</span>], nums[height]);</span><br><span class="line"></span><br><span class="line">	<span class="comment">//第二步：划分结束后，把与keyVal相等的元素移到枢纽轴（也就是枢纽元素）的左边</span></span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> k = i,j = tmpLow;j &lt; left;j++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span> (nums[k] != keyVal)</span><br><span class="line">		&#123;</span><br><span class="line">			swap(nums[k], nums[j]);</span><br><span class="line">		&#125;</span><br><span class="line">		--k;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">int</span> partitionLeftIndex = i - leftCommonNum;</span><br><span class="line">	<span class="keyword">int</span> partitionRighttIndex = i + <span class="number">2</span>;</span><br><span class="line">	<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; partitionIndex;</span><br><span class="line">	partitionIndex.push_back(partitionLeftIndex);</span><br><span class="line">	partitionIndex.push_back(partitionRighttIndex);</span><br><span class="line">	<span class="keyword">return</span> partitionIndex;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">quickSortGatherKey</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; &amp;nums, <span class="keyword">int</span> low, <span class="keyword">int</span> height)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (height - low + <span class="number">1</span> &lt; <span class="number">10</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		insertSort(nums, low, height);</span><br><span class="line">		<span class="keyword">return</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; partitionIndex = getPartitionGatherKey(nums, low, height);</span><br><span class="line">		quickSortGatherKey(nums, low, partitionIndex[<span class="number">0</span>]);</span><br><span class="line">		quickSortGatherKey(nums, partitionIndex[<span class="number">1</span>], height);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<font size="6"><strong>　　综上所述，以及对大量数据的测试可以得到最好的快排组合是：<font size="16" color="#0099ff">三数取中+插排+聚集相等元素</font>,它和STL中的Sort函数效率差不多</strong></font>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Algorithm/" rel="tag"><i class="fa fa-tag"></i> Algorithm</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/29/6-ZigZag-Conversion/" rel="next" title="6. ZigZag Conversion">
+                <i class="fa fa-chevron-left"></i> 6. ZigZag Conversion
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/06/30/11-Container-With-Most-Water/" rel="prev" title="11. Container With Most Water">
+                11. Container With Most Water <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8yOTE2NS81NzMy"></div>
+    
+  </div>
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="CodePikachu" />
+          <p class="site-author-name" itemprop="name">CodePikachu</p>
+           
+              <p class="site-description motion-element" itemprop="description">技术随笔</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">153</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xymj" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/your-user-name" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/oxymjo" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.zhihu.com/people/meng-38-77" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#快速排序枢纽元选择的优化方法"><span class="nav-number">1.</span> <span class="nav-text">快速排序枢纽元选择的优化方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#方法一：随机选取枢纽元"><span class="nav-number">1.1.</span> <span class="nav-text">方法一：随机选取枢纽元</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#随机选取枢纽元算法："><span class="nav-number">1.1.1.</span> <span class="nav-text">　　随机选取枢纽元算法：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方法二：三数取中分割法选取枢纽元"><span class="nav-number">1.2.</span> <span class="nav-text">方法二：三数取中分割法选取枢纽元</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#三数取中分割法枢纽元算法："><span class="nav-number">1.2.1.</span> <span class="nav-text">　　三数取中分割法枢纽元算法：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#枢纽元确定后递归快排函数优化方法"><span class="nav-number">2.</span> <span class="nav-text">枢纽元确定后递归快排函数优化方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#方法一：当待排序序列的长度分割到一定大小后，使用插入排序"><span class="nav-number">2.1.</span> <span class="nav-text">方法一：当待排序序列的长度分割到一定大小后，使用插入排序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方法二：在一次分割结束后，可以把与枢纽元相等的元素聚在一起，继续下次分割时，不用再对与枢纽元相等元素分割"><span class="nav-number">2.2.</span> <span class="nav-text">方法二：在一次分割结束后，可以把与枢纽元相等的元素聚在一起，继续下次分割时，不用再对与枢纽元相等元素分割</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#举例："><span class="nav-number">2.2.1.</span> <span class="nav-text">　举例：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#具体实现过程分为两步："><span class="nav-number">2.2.2.</span> <span class="nav-text">　具体实现过程分为两步：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#具体代码实现："><span class="nav-number">2.2.3.</span> <span class="nav-text">　具体代码实现：</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">CodePikachu</span>
+</div>
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共93.4k字</span>
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (search_path.endsWith("json")) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("gdpJgyUzWgbctsaaIJ7sPXxQ-gzGzoHsz", "hzX7gRfqs3BaeJhKcBe4vajy");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>
