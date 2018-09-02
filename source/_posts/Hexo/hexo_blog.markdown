@@ -30,6 +30,7 @@ categories:
    $ cnpm install -g hexo-cli   （与原先的npm完全一样，只是命令改为cnpm,一样等待hexo安装完成），出现的WARN可以不用理会，继续输入以下命令：
    $ cnpm install hexo --save
 
+<!--more-->
 
 
 
@@ -188,13 +189,13 @@ categories:
 #### 5.3 管理流程
 ##### 5.3.1 日常修改
 
-　　在本地对博客进行修改（添加新博文、修改样式等等）后，通过下面的流程进行管理：
+　　1. 在本地对博客进行修改（添加新博文、修改样式等等）后，通过下面的流程进行管理：
+    2. 依次执行git add .git;  commit -m "…";   git push origin hexo指令将改动推送到GitHub（此时当前分支应为hexo）；
+    3. 然后才执行hexo generate -d发布网站到master分支上。
 
-    依次执行git add .git;  commit -m "…";   git push origin hexo指令将改动推送到GitHub（此时当前分支应为hexo）；
-    然后才执行hexo generate -d发布网站到master分支上。
 #####  5.3.２本地资料丢失
 
 当重装电脑之后，或者想在其他电脑上修改博客，可以使用下列步骤：
 
-    使用git clone git@github.com:username/username.github.io.git拷贝仓库（默认分支为hexo）；
-    在本地新拷贝的username.github.io文件夹下通过Git bash依次执行下列指令：npm install hexo、npm install、npm install hexo-deployer-git（记得，不需要hexo init这条指令）
+    1. 使用git clone git@github.com:username/username.github.io.git拷贝仓库（默认分支为hexo）；
+    2. 在本地新拷贝的username.github.io文件夹下通过Git bash依次执行下列指令：npm install hexo、npm install、npm install hexo-deployer-git（记得，不需要hexo init这条指令）
