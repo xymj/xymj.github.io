@@ -3,7 +3,7 @@
   <entry>
     <title><![CDATA[Work Begin]]></title>
     <url>%2F2018%2F04%2F07%2FWorkBegin%2F</url>
-    <content type="text"><![CDATA[Work BeginWork hard and start recording your knowledge every day. Don’t forget to improve your professional knowledge in your work.]]></content>
+    <content type="text"><![CDATA[Work BeginWork hard and start recording your knowledge every day. Don’t forget to improve your professional knowledge in your work.Need Work…]]></content>
       <categories>
         <category>C++</category>
       </categories>
@@ -1629,17 +1629,6 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[18. 4Sum]]></title>
-    <url>%2F2017%2F06%2F20%2F18-4Sum%2F</url>
-    <content type="text"><![CDATA[18. 4Sum&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Given an array S of n integers, are there elements a, b, c, and d in S such that a + b + c + d = target ? Find all unique quadruplets in the array which gives the sum of target. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Note : The solution set must not contain duplicate quadruplets. For example, given array S = [1, 0, -1, 0, -2, 2], and target = 0. A solution set is : [ [-1, 0, 0, 1], [-2, -1, 1, 2], [-2, 0, 0, 2] ] 思路 对数组排序 确定四元数中的前两个（a，b） 遍历剩余数组确定两外两个（c，d），确定cd时思路跟3Sum确定后两个数据一样，二分查找左右逼近。 在去重时采用set集合 问题&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第一次提交自己写的如下代码也会超时，主要原因是在每层循环的时候都调用nums.size()会造成很多的时间浪费，因为其是一个不变的值，所以应该初始化的时候直接把他付给一个整形变量，后面就不会再重复调用nums.size()了，降低时间复杂度 12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152class Solution &#123;public: vector&lt;vector&lt;int&gt;&gt; fourSum(vector&lt;int&gt;&amp; nums, int target) &#123; set&lt;vector&lt;int&gt;&gt; res2; vector&lt;vector&lt;int&gt;&gt; res; sort(nums.begin(), nums.end()); int len = nums.size(); for (int i = 0;i&lt;len-3;i++) &#123; for (int j = i+1;j&lt;len-2;j++) &#123; int pre = j + 1; int tail = len - 1; while (pre &lt; tail) &#123; vector&lt;int&gt; tempRes; int sum = nums[i] + nums[j] + nums[pre] + nums[tail]; if (sum == target) &#123; tempRes.push_back(nums[i]); tempRes.push_back(nums[j]); tempRes.push_back(nums[pre]); tempRes.push_back(nums[tail]); res2.insert(tempRes); pre++; tail--; &#125; else if (sum &lt; target) &#123; pre++; &#125; else tail--; &#125; &#125; &#125; for (auto r : res2) &#123; res.push_back(r); &#125; return res; &#125;&#125;;int main()&#123; vector&lt;int&gt; s = &#123; -3,-2,-1,0,0,1,2,3 &#125;; int target = 0; Solution3 ss; auto res = ss.fourSum(s, target); system("pause"); return 0;&#125;]]></content>
-      <categories>
-        <category>LeetCode</category>
-      </categories>
-      <tags>
-        <tag>LeetCode</tag>
-      </tags>
-  </entry>
-  <entry>
     <title><![CDATA[快速排序的两种实现思路和非递归实现--C++实现]]></title>
     <url>%2F2017%2F06%2F20%2FQuickSort-implement-with-C%2B%2B%2F</url>
     <content type="text"><![CDATA[思路一：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第一种是根据算法导论上的思想：取数组的最后一个元素为主元，i初始化为最低位元素的前一个位置，j指向遍历数组中待排序的元素，当j所指元素比主元小的时候i= i + 1，然后交换i和j所指的元素，j不断遍历，遇到小于主元的就进行交换，这样就能一直维持这样一个序列，i之前的元素(包括i所指元素本身)都是比主元小的元素，i到j之间都是比主元大的元素，j(包括j所指元素)之后都是待排序的元素，最后交换主元和第一个比主元大的元素就可以完成划分。&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;算法导论具体介绍如下：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;快速排序是基于分治模式处理的，对一个典型子数组A[p…r]排序的分治过程为三个步骤： &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;具体实现快速排序的伪代码： &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;具体例子分析详情： &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;C++代码实现如下： ++12345678910111213141516171819202122232425262728//1、进行区域的划分int getPartition(vector&lt;int&gt; &amp;nums, int low, int height)&#123; int keyVal = nums[height]; int i = low - 1; for (int j = low; j &lt; height; j++) &#123; if (nums[j] &lt;= keyVal) &#123; i = i + 1; swap(nums[i], nums[j]); &#125; &#125; swap(nums[i + 1], nums[height]); return i+1;&#125;//2、递归调用划分区域函数，进行快速排序void quickSort(vector&lt;int&gt; &amp;nums,int low,int height) &#123; if (low&lt;height) &#123; int mid = getPartition(nums, low, height); quickSort(nums, low, mid-1); quickSort(nums, mid + 1, height); &#125;&#125; 思路二：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第二种是严蔚敏的数据结构(C语言版)上的思想：取数组的第一个元素为主元，左(left)、右(height)两指针进行遍历，先右边开始边查找比主元小的（比主元大时height直接减减），找到就直接覆盖左边所指的元素，然后从左边开始查找比主元大的元素，找到就直接覆盖右边所指的元素，依次循环进行。最后low不小于height时把所取的主元付给low所指的位置，完成划分。&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;数据结构(C语言版)具体介绍如下： &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;具体实现快速排序的伪代码： &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;具体例子分析详情： &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;C++代码实现如下： ++123456789101112131415161718192021222324252627//1、进行区域的划分int getPartition(vector&lt;int&gt; &amp;nums, int low, int height)&#123; int keyVal = nums[low]; while (low&lt;height) &#123; while (low &lt; height&amp;&amp;nums[height] &gt;= keyVal) height--; nums[low] = nums[height]; while (low &lt; height&amp;&amp;nums[low] &lt;= keyVal) low++; nums[height] = nums[low]; &#125; nums[low] = keyVal; return low;&#125;//2、递归调用划分区域函数，进行快速排序void quickSort(vector&lt;int&gt; &amp;nums,int low,int height) &#123; if (low&lt;height) &#123; int mid = getPartition(nums, low, height); quickSort(nums, low, mid-1); quickSort(nums, mid + 1, height); &#125;&#125; 最后呈上快速排序的非递归实现： ++1234567891011121314151617181920212223242526272829303132333435363738void quickSortNonRecursive(vector&lt;int&gt; &amp;nums, int low, int height)&#123; stack&lt;int&gt; s; if (low&lt;height) &#123; int mid = getPartition(nums, low, height); if (mid-1&gt;low) &#123; s.push(low); s.push(mid - 1); &#125; if (mid+1&lt;height) &#123; s.push(mid + 1); s.push(height); &#125; while (!s.empty()) &#123; int qHeight = s.top(); s.pop(); int pLow = s.top(); s.pop(); int pqMid = getPartition(nums, pLow, qHeight); if (pqMid - 1 &gt; pLow) &#123; s.push(pLow); s.push(pqMid - 1); &#125; if (pqMid + 1 &lt; qHeight) &#123; s.push(pqMid + 1); s.push(qHeight); &#125; &#125; &#125;&#125; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;其实经过测试非递归的算法比递归实现还要慢。 因为递归算法使用的栈由程序自动产生，栈中包含：函数调用时的参数和函数中的局部变量。如果局部变量很多或者函数内部又调用了其他函数，则栈会很大。每次递归调用都要操作很大的栈，效率自然会下降。而对于非递归算法，每次循环使用自己预先创建的栈，因此不管程序复杂度如何，都不会影响程序效率。但是对于上面的快速排序，由于局部变量只有一个mid，栈很小，所以效率并不比非递归实现的低。 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;具体的关于快速排序的优化，见文章快速排序优化。]]></content>
@@ -1648,6 +1637,17 @@
       </categories>
       <tags>
         <tag>Algorithm</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[18. 4Sum]]></title>
+    <url>%2F2017%2F06%2F20%2F18-4Sum%2F</url>
+    <content type="text"><![CDATA[18. 4Sum&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Given an array S of n integers, are there elements a, b, c, and d in S such that a + b + c + d = target ? Find all unique quadruplets in the array which gives the sum of target. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Note : The solution set must not contain duplicate quadruplets. For example, given array S = [1, 0, -1, 0, -2, 2], and target = 0. A solution set is : [ [-1, 0, 0, 1], [-2, -1, 1, 2], [-2, 0, 0, 2] ] 思路 对数组排序 确定四元数中的前两个（a，b） 遍历剩余数组确定两外两个（c，d），确定cd时思路跟3Sum确定后两个数据一样，二分查找左右逼近。 在去重时采用set集合 问题&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第一次提交自己写的如下代码也会超时，主要原因是在每层循环的时候都调用nums.size()会造成很多的时间浪费，因为其是一个不变的值，所以应该初始化的时候直接把他付给一个整形变量，后面就不会再重复调用nums.size()了，降低时间复杂度 12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152class Solution &#123;public: vector&lt;vector&lt;int&gt;&gt; fourSum(vector&lt;int&gt;&amp; nums, int target) &#123; set&lt;vector&lt;int&gt;&gt; res2; vector&lt;vector&lt;int&gt;&gt; res; sort(nums.begin(), nums.end()); int len = nums.size(); for (int i = 0;i&lt;len-3;i++) &#123; for (int j = i+1;j&lt;len-2;j++) &#123; int pre = j + 1; int tail = len - 1; while (pre &lt; tail) &#123; vector&lt;int&gt; tempRes; int sum = nums[i] + nums[j] + nums[pre] + nums[tail]; if (sum == target) &#123; tempRes.push_back(nums[i]); tempRes.push_back(nums[j]); tempRes.push_back(nums[pre]); tempRes.push_back(nums[tail]); res2.insert(tempRes); pre++; tail--; &#125; else if (sum &lt; target) &#123; pre++; &#125; else tail--; &#125; &#125; &#125; for (auto r : res2) &#123; res.push_back(r); &#125; return res; &#125;&#125;;int main()&#123; vector&lt;int&gt; s = &#123; -3,-2,-1,0,0,1,2,3 &#125;; int target = 0; Solution3 ss; auto res = ss.fourSum(s, target); system("pause"); return 0;&#125;]]></content>
+      <categories>
+        <category>LeetCode</category>
+      </categories>
+      <tags>
+        <tag>LeetCode</tag>
       </tags>
   </entry>
   <entry>
