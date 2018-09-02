@@ -1,0 +1,338 @@
+---
+layout: "post"
+title: "JVM——垃圾收集器"
+date: "2018-09-02 23:17"
+tags:
+  - Java
+  - JVM
+categories:
+  - Java
+---
+
+
+
+# JVM——垃圾收集器
+
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;如果说收集算法是内存回收的方法论，垃圾收集器就是内存回收的具体实现。Java虚拟机规范中对垃圾收集器应该如何实现并没有任何规定，因此不同的厂商、不同版本的虚拟机所提供的垃圾收集器都可能会有很大的差别，并且一般都会提供参数供用户根据自己的应用特点和要求组合出各个年代所使用的收集器。
+
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;![image](https://raw.githubusercontent.com/changwensir/study_document/master/upload_img/JVM/%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8.png)
+
+
+
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;上图展示了7种作用于不同分代的收集器（包括JDK 1.7_Update14之后正式提供商用的G1收集器），如果两个收集器之间存在连线，就说明它们可以搭配使用。
+
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;在介绍这些收集器各自的特性之前，我们先来明确一个观点：虽然我们是在对各个收集器进行比较，但并非为了挑选一个最好的收集器出来。因为直到现在为止还没有最好的收集器出现，更加没有万能的收集器，所以我们选择的只是对具体应用最合适的收集器。这点不需要多加解释就能证明：如果有一种放之四海皆准、任何场景下都适用的完美收集器存在，那HotSpot虚拟机就没必要实现那么多不同的收集器了。
+<!--more-->
+------
+
+
+### 新生代收集器：
+&nbsp; &nbsp;&nbsp;&nbsp;**1. Serial 收集器**
+&nbsp; &nbsp;&nbsp;&nbsp;**2. ParNew 收集器**
+&nbsp; &nbsp;&nbsp;&nbsp;**3. Parallel Scavenge 收集器**
+<br/>
+<br/>
+
+
+
+### &nbsp; &nbsp;&nbsp;1、Serial 收集器
+------
+
+&nbsp; &nbsp;&nbsp;&nbsp;最基本、发展历史最悠久的收集器。<br/>
+&nbsp; &nbsp;&nbsp;&nbsp;**适用：**<br/>
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;看上去没什么用，但实际上到现在为止，它依然是虚拟机运行在Client模式下的默认新生代收集器。
+
+&nbsp; &nbsp;&nbsp;&nbsp;**特点:**<br/>
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;1).单线程的收集器，说明它只会使用一个CPU或一条收集线程去完成垃圾收集工作。
+
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;2).在它进行垃圾收集时，必须暂停其他所有的工作线程（Sun将这件事情称之为“Stop The World”）,直到它收集结束。这项工作实际上是由虚拟机在后台自动发起和自动完成的，在用户不可见的情况下把用户的正常工作的线程全部停掉，这对很多应用来说都是难以接受的。
+
+&nbsp; &nbsp;&nbsp;&nbsp;**收集算法：**<br/>
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;采用复制算法
+
+&nbsp; &nbsp;&nbsp;&nbsp;**优点:**<br/>
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;简单而高效（与其他收集器的单线程比），对于限定单个CPU的环境来说，Serial收集器由于没有线程交互的开销，专心做垃圾收集自然可以获得最高的单线程收集效率。在用户的桌面应用场景中，分配给虚拟机管理的内存一般来说不会很大，收集几十兆甚至一两百兆的新生代（仅仅是新生代使用的内存，桌面应用基本上不会再大了），停顿时间完全可以控制在几十毫秒最多一百多毫秒以内，只要不是频繁发生，这点停顿是可以接受的。所以，Serial收集器对于运行在Client模式下的虚拟机来说是一个很好的选择。
+
+&nbsp; &nbsp;&nbsp;&nbsp;**缺点:**<br/>
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;GC时暂停线程带给用户不良体验
+
+&nbsp; &nbsp;&nbsp;&nbsp;**搭配使用的收集器：**<br/>
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;CMS 或Serial Old(MSC)
+
+![image](https://img-blog.csdn.net/20161221144138060?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdTAxMDU1ODY2MA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
+
+------
+
+
+### &nbsp; &nbsp;&nbsp;2、ParNew收集器
+------
+
+&nbsp; &nbsp;&nbsp;&nbsp;ParNew收集器其实就是Serial收集器的多线程版本，除了使用多条线程进行垃圾收集之外，其余行为都与Serial收集器完全一样，实现上这两种收集器也共用了相当多的代码。
+
+&nbsp; &nbsp;&nbsp;&nbsp;**适用：**<br/>
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;运行在Server模式下的虚拟机中的新生代。
+
+&nbsp; &nbsp;&nbsp;&nbsp;**特点:**<br/>
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;1.多线程GC(并行):ParNew是Serial的多线程版本，两者共用了许多代码。
+
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;2.在GC时暂停所有用户线程。
+
+&nbsp; &nbsp;&nbsp;&nbsp;**算法：**<br/>
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;采用复制算法。
+
+&nbsp; &nbsp;&nbsp;&nbsp;**优点:**<br/>
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;高效。
+
+&nbsp; &nbsp;&nbsp;&nbsp;**缺点:**<br/>
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;GC时暂停线程带给用户不良体验,单线程下效果不一定优于Serial。
+
+&nbsp; &nbsp;&nbsp;&nbsp;**搭配使用的收集器：**<br/>
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;CMS 或Serial Old(MSC)。
+
+
+![image](https://img-blog.csdn.net/20161221144147142?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdTAxMDU1ODY2MA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
+
+　　
+&nbsp;&nbsp;&nbsp;&nbsp;ParNew收集器有一个与性能无关但很重要的原因是，除了Serial收集器外，目前只有它能与CMS收集器配合工作。在JDK 1.5以后使用CMS来收集老年代的时候，新生代只能选择ParNew或Serial收集器中的一个。
+
+
+------
+### &nbsp; &nbsp;&nbsp;3、Parallel Scavenge收集器
+------
+
+
+
+&nbsp; &nbsp;&nbsp;&nbsp;**适用：**<br/>
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;新生代收集器，在后台运算而不需要太多交互的任务。
+
+&nbsp; &nbsp;&nbsp;&nbsp;**特点:**<br/>
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;1.多线程GC(并行)。<br/>
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;2.在GC时暂停所有用户线程。
+
+
+&nbsp; &nbsp;&nbsp;&nbsp;**算法：**<br/>
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;采用复制算法
+
+&nbsp; &nbsp;&nbsp;&nbsp;**优点:**<br/>
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;高效
+
+&nbsp; &nbsp;&nbsp;&nbsp;**搭配使用的收集器：**<br/>
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;Parallel Old或Serial Old(MSC)
+
+
+&nbsp; &nbsp;&nbsp;&nbsp;**与其他收集器的不同:**<br/>
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;1.ParNew,CMS等收集器的关注点在于尽可能缩短垃圾收集时用户线程的停顿时间，而Parallel Scavenge收集器的目标则是达到一个可控制的吞吐量。**【吞吐量：运行代码时间/（运行用户代码时间+垃圾收集时间）】**
+
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;2.停顿时间越短就越适合需要与用户交互的程序，良好的响应速度能提升用户的体验；而高吞吐量则可以最高效率地利用CPU时间，尽快地完成程序的运算任务，主要适合在后台运算而不需要太多交互的任务。
+
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;3.Parallel Scavenge可采用GC自适应的调节策略(这是与另外两一个重要的区别）。<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**相关参数设置，用于精确控制吞吐量：**<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-XX:MaxGCPauseMillis &nbsp;&nbsp;&nbsp;&nbsp;最大垃圾收集停顿时间<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-XX:GCTimeRatio &nbsp;&nbsp;&nbsp;&nbsp;垃圾收集时间与运行用户代码时间的比例=垃圾收集时间/运行用户代码时间,相当于是吞吐量的倒数。
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**实现：**<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;降低GC停顿时间：牺牲吞吐量和新生代空间(减小新生代空间，GC频率变大，吞吐量降低)
+
+
+&nbsp; &nbsp;&nbsp;&nbsp;**GC自适应的调节策略:**<br/>
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;-XX:+UseAdaptiveSizePolicy&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 使用自适应的调节策略 即不需要指定新生代的大小，Eden与Surivior的比例，晋升老年代的年龄等细节参数，虚拟机自动根据根据当前系统的状态动态调整这些参数以提供最合适的停顿时间或最大的吞吐量。
+
+
+
+------
+
+### 老年代收集器：
+&nbsp; &nbsp;&nbsp;&nbsp;**1. Serial Old 收集器**
+&nbsp; &nbsp;&nbsp;&nbsp;**2. Parallel Old 收集器**
+&nbsp; &nbsp;&nbsp;&nbsp;**3. CMS 收集器**
+<br/>
+<br/>
+
+
+### &nbsp; &nbsp;&nbsp;1. Serial Old 收集器
+------
+&nbsp;&nbsp;&nbsp;&nbsp;**适用：**<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;1.运行在Client模式下的虚拟机中的老年代。
+
+　　
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.在Server模式下，它主要还有两大用途。<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;1).与Parallel Scavenge搭配。<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;2).作为CMS收集器的后备预案，在并发收集发生Concurrent Mode Failure的时候使用。
+
+&nbsp; &nbsp;&nbsp;&nbsp;**特点:**<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;1.单线程GC，Serial收集器的老年代版本。
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;2.在GC时暂停所有用户线程。
+
+&nbsp; &nbsp;&nbsp;&nbsp;**算法：**<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;采用标记-整理算法
+
+&nbsp; &nbsp;&nbsp;&nbsp;**优点：**<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;简单，高效
+
+&nbsp; &nbsp;&nbsp;&nbsp;**缺点：**<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;GC时暂停线程带给用户不良体验
+
+&nbsp; &nbsp;&nbsp;&nbsp;**搭配使用的收集器：**<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;Serial Old(MSC)或ParNew
+
+
+------
+
+
+### &nbsp; &nbsp;&nbsp;2. Parallel Old 收集器
+------
+
+&nbsp;&nbsp;&nbsp;&nbsp;**适用：**<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;运行在Server模式下，注重吞吐量及CPU资源敏感的场合，都可以优先考虑Parallel Scavenge加Parallel Old收集器。
+
+&nbsp;&nbsp;&nbsp;&nbsp;**特点：**<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1).多线程GC(并行):Parallel Scavenge的老年代版本。
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2).在GC时暂停所有用户线程。
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3).这个收集器是在JDK 1.6中才开始提供。
+
+&nbsp;&nbsp;&nbsp;&nbsp;**算法：**<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;采用标记-整理算法
+
+&nbsp;&nbsp;&nbsp;&nbsp;**优点：**<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;高效
+
+&nbsp;&nbsp;&nbsp;&nbsp;**缺点：**<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GC时暂停线程带给用户不良体验,单线程下效果不一定优于Serial。
+
+&nbsp;&nbsp;&nbsp;&nbsp;**搭配使用的收集器：**<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Parallel Scavenge
+
+
+![image](https://img-blog.csdn.net/20161221144209592?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdTAxMDU1ODY2MA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
+
+
+------
+### &nbsp; &nbsp;&nbsp;3. CMS(Concurrent Mark Sweep) 收集器
+------
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CMS（Concurrent Mark Sweep）收集器是一种以获取最短回收停顿时间为目标的收集器。目前很大一部分的Java应用都集中在互联网站或B/S系统的服务端上，这类应用尤其重视服务的响应速度，希望系统停顿时间最短，以给用户带来较好的体验。
+
+&nbsp;&nbsp;&nbsp;&nbsp;**适用：**<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;运行在Server模式下的虚拟机中的老年代，适合对响应时间要求高的应用。
+
+&nbsp;&nbsp;&nbsp;&nbsp;**算法：**<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;采用“标记-清除”算法
+
+&nbsp;&nbsp;&nbsp;&nbsp;**特点:**<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;多线程、与用户工作线程并发
+
+&nbsp;&nbsp;&nbsp;&nbsp;**过程:**<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.初始标记：暂停用户线程，标记GC Roots能直接关联的对象,速度很快。
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.并发标记：用户线程与标记线程并发，进行GC Roots Tracing的过程。
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.重新标记：为了修正并发标记期间，因用户程序继续运作而导致标记产生变动的那一部分对象的标记记录，这个阶段的停顿时间一般会比初始标记阶段稍长一些，但远比并发标记的时间短。
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.并发清除：用户线程与清除线程并发。
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**其中初始标记、重新标记这两个步骤仍然需要“Stop The World”。**
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**由于整个过程中耗时最长的并发标记和并发清除过程中，收集器线程都可以与用户线程一起工作，所以总体上来说，CMS收集器的内存回收过程是与用户线程一起并发地执行的。**
+
+
+　　
+&nbsp;&nbsp;&nbsp;&nbsp;下图可以比较清楚地看到CMS收集器的运作步骤中并发和需要停顿的时间。
+
+
+![image](https://github.com/changwensir/study_document/raw/master/upload_img/JVM/CMS%E6%94%B6%E9%9B%86%E5%99%A8.png)
+
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;**优点:**<br/> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;并发收集、低停顿，由于耗时最长的并发标记和并发清除阶段都与用户线程并行工作，故系统停顿时间极短。
+
+&nbsp;&nbsp;&nbsp;&nbsp;**缺点:**<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1. **对CPU资源非常敏感**。<br/>
+　　**原因**：面向并发设计的程序都对CPU资源比较敏感。并发时，因为占用了一部分线程（或者说CPU资源）而导致应用程序变慢，总吞吐量会降低，应用程序会变慢，当CPU数不足时，尤其明显。<br/>
+　　**解决**：增量式并发收集器（i-CMS）：在并发标记、清除时让GC线程与用户线程交替运行，以降低GC线程独占CPU的时间。当GC时间将变长时，效果一般，被丢弃使用。
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2. **无法处理浮动垃圾,可能出现“Concurrent Mode “Failure”失败而导致另一次Full GC的产生**。<br/>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**浮动垃圾**：在并发清除阶段，用户线程仍在运行，此时产生的垃圾无法在该次收集中处理。<br/>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;同时由于要保证并发，就必须预留内存给用户线程使用，因此CMS无法等到老年代几乎完全填满时再进行收集。JDK 1.5中CMS默认当老年代被使用68%时被激发。1.6中为92%。<br/>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当CMS运行期间预留的内存无法满足程序需要，就会出现一次“Concurrent Mode “Failure”失败，这时虚拟机将启动后备预案：临时使用Serial Old收集器来重新进行老年代垃圾收集，这样停顿时间就会很长。
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3. **产生空间碎片，影响大对象的分配。**
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;由于该收集器是由“标记-清除”算法实现的所引起的。所以往往存在有很大空间剩余，当无法找到足够大的连续空间来分配当前对象，不得不提前出发一次Full GC。
+
+&nbsp;&nbsp;&nbsp;&nbsp;**解决：**<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.-XX:+UseCMSCompactFullCollection 开关参数（默认开启）用于当CMS要进行**Full GC时开启内存碎片的合并整理过程**,该过程不能并发，故停顿==时间变长==。
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.-XX:CMSFullGCsBeforeCompaction 用于设置**执行多少次不压缩的Full GC后跟着来一次带压缩的Full GC**。默认为0，表示每次进入Full GC时都进行碎片整理。
+
+&nbsp;&nbsp;&nbsp;&nbsp;**搭配使用的收集器**<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Serial或ParNew
+
+-----
+
+### 新生代和老年代均适用集器：
+&nbsp; &nbsp;&nbsp;&nbsp;**1. G1 收集器**
+<br/>
+<br/>
+
+
+### &nbsp; &nbsp;&nbsp;1. G1 收集器(未来垃圾收集器的趋势，需好好了解)
+------
+
+&nbsp;&nbsp;&nbsp;&nbsp;**适用：**<br/> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;面向服务端应用，适用于新生代和老年代。当前收集器技术发展的最前沿成果
+
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;**内存布局：**<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;G1的堆内存布局与其他收集器不同，G1将整个堆内存空间划分为多个大小相等的Region(2-32M 大小，可以参数指定)，虽然仍然有新生代和老年代的概念，但是新生代和老年代不再是物理隔离的，他们都是一部分Region（不需要连续）的集合。
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;**特点:**<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**1.并行与并发**，可充分利用CPU资源。
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**2.分代收集。**
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**3.空间整合**， G1从整体看是”标记-整理“算法，从局部(两个Region之间)看，是”复制“算法。 不会产生空间碎片。
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**4.可预测的停顿**，建立可预测的停顿时间模型，能让使用者明确指定在一个长度为M毫秒的时间内，消耗在垃圾收集的时间不得超过N毫秒，这几乎已经是实时Java（RTSJ）的垃圾收集器的特征了。
+　　
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;**Garbage First名称的由来：**<br/>
+　　G1收集器可以实现在基本不牺牲吞吐量的前提下完成低停顿的内存回收，这是由于它能够极力地避免全区域的垃圾收集。G1将内存划分为Region，跟踪各个Region里面的垃圾堆积的价值大小（回收所获得的空间大小以及回收所需时间的经验值），在后台维护一个优先列表，每次根据允许的收集时间，优先回收价值最大的Region。
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;**难点:**<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;虽然内存分为Region，但垃圾收集不能真的以Region为单位进行，因为Region不可能是孤立的，存在某个对象被多个Region的引用，那在做可达性判断确定对象是否存活时，是否需要扫描整个堆空间呢？注意：此问题在所有的收集器中都存在（如存在新生代与老年代之间的引用）。
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;**解决：**<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;使用Remembered Set来避免全堆扫描。
+
+&nbsp;&nbsp;&nbsp;&nbsp;**优化的Region扫描过程：**<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;G1中每个Region都有一个与之对应的Remembered Set，虚拟机发现程序在对Reference类型的数据进行写操作时，会产生一个Write Barrier暂时中断操作，检查Reference类型引用的对象是否处于不同的Region（在分代的例子中就是检查是否老年代的对象引用了新生代中的对象），如果是，便通过CardTable把相关引用信息记录到被引用对象所属的Region的Remembered Set中。当进行内存回收时，在GC根节点的枚举范围中加入Remembered Set即可保证不对全堆扫描也不会有遗漏。
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;**垃圾收集过程(与CMS相似)：**<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.初始标记:暂停用户线程，标记GC Roots能直接关联的对象。
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.并发标记:用户线程与标记线程并发，进行GC Roots的Trace。
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.最终标记修正并发标记阶段，因用户线程继续运行而导致标记产生变动的那一部分对象的标记记录。
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.筛选回收:最后筛选回收阶段，首先对各个Region的回收价值和成本进行排序，根据用户所期望的GC停顿时间来制定回收计划，进而进行垃圾回收。
+
+&nbsp;&nbsp;&nbsp;&nbsp;**算法：**<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;全局标记-整理+局部复制算法
+
+&nbsp;&nbsp;&nbsp;&nbsp;**优点:**<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;高效，停顿时间可控、可预测
