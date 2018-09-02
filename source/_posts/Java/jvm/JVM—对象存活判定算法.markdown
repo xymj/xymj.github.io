@@ -2,8 +2,11 @@
 layout: "post"
 title: "JVM—对象存活判定算法"
 date: "2018-09-02 22:39"
-tags: [Java][JVM]
-categories: Java
+tags:
+  - Java
+  - JVM
+categories:
+  - Java
 ---
 
 # JVM——对象存活判定算法
