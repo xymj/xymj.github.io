@@ -70,7 +70,6 @@ theme: next
 deploy:
   type: git
   repo: https://xymj:a6023292tao@github.com/xymj/xymj.github.io.git
-  branch: master
   
 search:
   path: search.xml
