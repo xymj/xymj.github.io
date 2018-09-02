@@ -1,0 +1,89 @@
+---
+layout: "post"
+title: "JVM—GC 相关参数总结"
+date: "2018-09-02 23:35"
+tags:
+  - Java
+  - JVM
+categories:
+  - Java
+---
+
+
+
+## 1. 与串行回收器相关的参数
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**-XX:+UseSerialGC**   :&nbsp;&nbsp;&nbsp;在新生代和老年代使用串行回收器。
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**-XX:+SuivivorRatio**  :&nbsp;&nbsp;&nbsp;设置 eden 区大小和 survivor 区大小的比例。
+
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;**-XX:+PretenureSizeThreshold**         :&nbsp;&nbsp;&nbsp;设置大对象直接进入老年代的阈值。当对象的大小超过这个值时，将直接在老年代分配。
+
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;**-XX:MaxTenuringThreshold**  :&nbsp;&nbsp;&nbsp;设置对象进入老年代的年龄的最大值。每一次 Minor GC 后，对象年龄就加 1。任何大于这个年龄的对象，一定会进入老年代。
+
+
+<!--more-->
+
+
+## 2. 与并行 GC 相关的参数
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**-XX:+UseParNewGC**   : &nbsp;&nbsp;&nbsp;在新生代使用并行收集器。
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**-XX:+UseParallelOldGC**   : &nbsp;&nbsp;&nbsp;老年代使用并行回收收集器。
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**-XX:ParallelGCThreads**    ：设置用于垃圾回收的线程数。通常情况下可以和 CPU 数量相等。但在 CPU 数量比较多的情况下，设置相对较小的数值也是合理的。
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**-XX:MaxGCPauseMills**   ：设置最大垃圾收集停顿时间。它的值是一个大于 0 的整数。收集器在工作时，会调整 Java 堆大小或者其他一些参数，尽可能地把停顿时间控制在 MaxGCPauseMills 以内。
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**-XX:GCTimeRatio**   :&nbsp;&nbsp;&nbsp;设置吞吐量大小，它的值是一个 0-100 之间的整数。假设 GCTimeRatio 的值为 n，那么系统将花费不超过 1/(1+n) 的时间用于垃圾收集。
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**-XX:+UseAdaptiveSizePolicy**   :&nbsp;&nbsp;&nbsp;打开自适应 GC 策略。在这种模式下，新生代的大小，eden 和 survivor 的比例、晋升老年代的对象年龄等参数会被自动调整，以达到在堆大小、吞吐量和停顿时间之间的平衡点。
+
+
+## 3. 与 CMS 回收器相关的参数
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**-XX:+UseConcMarkSweepGC**   :&nbsp;&nbsp;&nbsp; 新生代使用并行收集器，老年代使用 CMS+串行收集器。
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**-XX:+ParallelCMSThreads**   : &nbsp;&nbsp;&nbsp;设定 CMS 的线程数量。
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**-XX:+CMSInitiatingOccupancyFraction**   :&nbsp;&nbsp;&nbsp;设置 CMS 收集器在老年代空间被使用多少后触发，默认为 68% (JDK 1.6中提升至92%)。
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**-XX:+UseFullGCsBeforeCompaction**   :&nbsp;&nbsp;&nbsp;设定进行多少次 CMS 垃圾回收后，进行一次内存压缩。
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**-XX:+CMSClassUnloadingEnabled**   :&nbsp;&nbsp;&nbsp;允许对类元数据进行回收。？？？？
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**-XX:+CMSParallelRemarkEndable**   :&nbsp;&nbsp;&nbsp;启用并行重标记。
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**-XX:CMSInitatingPermOccupancyFraction**   :当永久区占用率达到这一百分比后，启动 CMS 回收 (前提是-XX:+CMSClassUnloadingEnabled 激活了)。
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**-XX:UseCMSInitatingOccupancyOnly**   :表示只在到达阈值的时候，才进行 CMS 回收。
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**-XX:+CMSIncrementalMode**   :&nbsp;&nbsp;&nbsp;使用增量模式，比较适合单 CPU。
+
+
+## 4. 与 G1 回收器相关的参数
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**-XX:+UseG1GC**   ：&nbsp;&nbsp;&nbsp;使用 G1 回收器。
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**-XX:+UnlockExperimentalVMOptions**   :允许使用实验性参数。
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**-XX:+MaxGCPauseMills**   :&nbsp;&nbsp;&nbsp;设置最大垃圾收集停顿时间。
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**-XX:+GCPauseIntervalMills**   :&nbsp;&nbsp;&nbsp;设置停顿间隔时间。
+
+
+
+## 5. 其他参数
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**-XX:+DisableExplicitGC**   : &nbsp;&nbsp;&nbsp;禁用显示 GC。

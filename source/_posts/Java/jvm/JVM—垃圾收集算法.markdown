@@ -9,8 +9,6 @@ categories:
   - Java
 ---
 
-# JVM——垃圾收集算法
-
 
 ### &nbsp; &nbsp;&nbsp;1、标记-清除算法(Mark-Sweep)
 ------
