@@ -113,21 +113,21 @@
 
 
 
-<meta name="description" content="JVM——对象存活判定算法&amp;nbsp; &amp;nbsp;&amp;nbsp;1、引用计数算法 &amp;nbsp; &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;引用计数算法就是对于创建的每一个对象都有一个与之关联的计数器，这个计数器记录着该对象被使用的次数，每当有一个地方引用它时，计数器值加1；当引用失效时，计数器减1；任何时刻计数器都为0的对象就是不可能再被使用的，垃圾收集器在进行垃圾回收时，对扫描到的每一个对">
+<meta name="description" content="&amp;nbsp; &amp;nbsp;&amp;nbsp;1、引用计数算法 &amp;nbsp; &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;引用计数算法就是对于创建的每一个对象都有一个与之关联的计数器，这个计数器记录着该对象被使用的次数，每当有一个地方引用它时，计数器值加1；当引用失效时，计数器减1；任何时刻计数器都为0的对象就是不可能再被使用的，垃圾收集器在进行垃圾回收时，对扫描到的每一个对象判断一下计数器是否等于0">
 <meta name="keywords" content="Java,JVM">
 <meta property="og:type" content="article">
 <meta property="og:title" content="JVM—对象存活判定算法">
 <meta property="og:url" content="http://yoursite.com/2018/09/02/Java/jvm/JVM—对象存活判定算法/index.html">
 <meta property="og:site_name" content="PikachuBLOG">
-<meta property="og:description" content="JVM——对象存活判定算法&amp;nbsp; &amp;nbsp;&amp;nbsp;1、引用计数算法 &amp;nbsp; &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;引用计数算法就是对于创建的每一个对象都有一个与之关联的计数器，这个计数器记录着该对象被使用的次数，每当有一个地方引用它时，计数器值加1；当引用失效时，计数器减1；任何时刻计数器都为0的对象就是不可能再被使用的，垃圾收集器在进行垃圾回收时，对扫描到的每一个对">
+<meta property="og:description" content="&amp;nbsp; &amp;nbsp;&amp;nbsp;1、引用计数算法 &amp;nbsp; &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;引用计数算法就是对于创建的每一个对象都有一个与之关联的计数器，这个计数器记录着该对象被使用的次数，每当有一个地方引用它时，计数器值加1；当引用失效时，计数器减1；任何时刻计数器都为0的对象就是不可能再被使用的，垃圾收集器在进行垃圾回收时，对扫描到的每一个对象判断一下计数器是否等于0">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/images/GCRootReachAnalysis.png">
 <meta property="og:image" content="http://yoursite.com/images/finilized2.png">
 <meta property="og:image" content="http://yoursite.com/images/finilized1.png">
-<meta property="og:updated_time" content="2018-09-02T15:20:48.261Z">
+<meta property="og:updated_time" content="2018-09-02T15:39:50.224Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JVM—对象存活判定算法">
-<meta name="twitter:description" content="JVM——对象存活判定算法&amp;nbsp; &amp;nbsp;&amp;nbsp;1、引用计数算法 &amp;nbsp; &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;引用计数算法就是对于创建的每一个对象都有一个与之关联的计数器，这个计数器记录着该对象被使用的次数，每当有一个地方引用它时，计数器值加1；当引用失效时，计数器减1；任何时刻计数器都为0的对象就是不可能再被使用的，垃圾收集器在进行垃圾回收时，对扫描到的每一个对">
+<meta name="twitter:description" content="&amp;nbsp; &amp;nbsp;&amp;nbsp;1、引用计数算法 &amp;nbsp; &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;引用计数算法就是对于创建的每一个对象都有一个与之关联的计数器，这个计数器记录着该对象被使用的次数，每当有一个地方引用它时，计数器值加1；当引用失效时，计数器减1；任何时刻计数器都为0的对象就是不可能再被使用的，垃圾收集器在进行垃圾回收时，对扫描到的每一个对象判断一下计数器是否等于0">
 <meta name="twitter:image" content="http://yoursite.com/images/GCRootReachAnalysis.png">
 
 
@@ -420,7 +420,7 @@
                   <span class="post-meta-item-text">字数统计</span>
                 
                 <span title="字数统计">
-                  2,933
+                  2,924
                 </span>
               
 
@@ -454,8 +454,10 @@
       
 
       
-        <h1 id="JVM——对象存活判定算法"><a href="#JVM——对象存活判定算法" class="headerlink" title="JVM——对象存活判定算法"></a>JVM——对象存活判定算法</h1><h3 id="nbsp-nbsp-nbsp-1、引用计数算法"><a href="#nbsp-nbsp-nbsp-1、引用计数算法" class="headerlink" title="&nbsp; &nbsp;&nbsp;1、引用计数算法"></a>&nbsp; &nbsp;&nbsp;1、引用计数算法</h3><hr>
-<p>&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;引用计数算法就是对于创建的每一个对象都有一个与之关联的计数器，这个计数器记录着该对象被使用的次数，每当有一个地方引用它时，计数器值加1；当引用失效时，计数器减1；任何时刻计数器都为0的对象就是不可能再被使用的，垃圾收集器在进行垃圾回收时，对扫描到的每一个对象判断一下计数器是否等于0，若等于0，就会释放该对象占用的内存空间,同时将该对象引用的其他对象的计数器进行减一操作。<br><a id="more"></a><br>&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;引用计数算法的垃圾收集一般有侵入式与非侵入式两种，侵入式的实现就是将引用计数器直接根植在对象内部，用C++的思想进行解释就是，在对象的构造或者拷贝构造中进行加一操作，在对象的析构中进行减一操作，非侵入式思想就是有一块单独的内存区域，用作引用计数器。</p>
+        <h3 id="nbsp-nbsp-nbsp-1、引用计数算法"><a href="#nbsp-nbsp-nbsp-1、引用计数算法" class="headerlink" title="&nbsp; &nbsp;&nbsp;1、引用计数算法"></a>&nbsp; &nbsp;&nbsp;1、引用计数算法</h3><hr>
+<p>&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;引用计数算法就是对于创建的每一个对象都有一个与之关联的计数器，这个计数器记录着该对象被使用的次数，每当有一个地方引用它时，计数器值加1；当引用失效时，计数器减1；任何时刻计数器都为0的对象就是不可能再被使用的，垃圾收集器在进行垃圾回收时，对扫描到的每一个对象判断一下计数器是否等于0，若等于0，就会释放该对象占用的内存空间,同时将该对象引用的其他对象的计数器进行减一操作。</p>
+<a id="more"></a>
+<p>&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;引用计数算法的垃圾收集一般有侵入式与非侵入式两种，侵入式的实现就是将引用计数器直接根植在对象内部，用C++的思想进行解释就是，在对象的构造或者拷贝构造中进行加一操作，在对象的析构中进行减一操作，非侵入式思想就是有一块单独的内存区域，用作引用计数器。</p>
 <p>&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;算法的优点：引用计数算法的实现简单，判断效率也很高，使用引用计数器,内存回收可以穿插在程序的运行中，在程序运行中，当发现某一对象的引用计数器为0时，可以立即对该对象所占用的内存空间进行回收，这种方式可以避免FULL GC时带来的程序暂停。</p>
 <p>&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;算法的缺点：采用引用计数器进行垃圾回收，最大的缺点就是不能解决<strong>循环引用</strong>的问题，例如一个象(A Object)持有另外一个对象(B Object)的引用，t同时B对象也持有A对象的引用，这种情况下，两个对象实例将一直存在于JVM的堆中，无法进行回收,代码示例如下(引用计数器无法对a与b对象进行回收):</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">class A &#123;</span><br><span class="line">    private B b;</span><br><span class="line">    public B getB() &#123;</span><br><span class="line">        return b;</span><br><span class="line">    &#125;</span><br><span class="line">    public void setB(B b) &#123;</span><br><span class="line">        this.b = b;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class B &#123;</span><br><span class="line">    private A a;</span><br><span class="line">    public A getA() &#123;</span><br><span class="line">        return a;</span><br><span class="line">    &#125;</span><br><span class="line">    public void setA(A a) &#123;</span><br><span class="line">        this.a = a;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class Test &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        A a = new A();</span><br><span class="line">        B b = new B();</span><br><span class="line">        a.setB(b);</span><br><span class="line">        b.setA(a);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -620,7 +622,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">157</span>
+                <span class="site-state-item-count">158</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -722,7 +724,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#JVM——对象存活判定算法"><span class="nav-number">1.</span> <span class="nav-text">JVM——对象存活判定算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#nbsp-nbsp-nbsp-1、引用计数算法"><span class="nav-number">1.0.1.</span> <span class="nav-text">    1、引用计数算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nbsp-nbsp-nbsp-2、可达性分析算法"><span class="nav-number">1.0.2.</span> <span class="nav-text">    2、可达性分析算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#nbsp-nbsp-nbsp-对象生存还是死亡"><span class="nav-number">1.0.2.1.</span> <span class="nav-text">    对象生存还是死亡</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#nbsp-nbsp-nbsp-3、引用"><span class="nav-number">1.0.2.2.</span> <span class="nav-text">    3、引用</span></a></li></ol></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#nbsp-nbsp-nbsp-1、引用计数算法"><span class="nav-number">1.</span> <span class="nav-text">    1、引用计数算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nbsp-nbsp-nbsp-2、可达性分析算法"><span class="nav-number">2.</span> <span class="nav-text">    2、可达性分析算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#nbsp-nbsp-nbsp-对象生存还是死亡"><span class="nav-number">2.1.</span> <span class="nav-text">    对象生存还是死亡</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#nbsp-nbsp-nbsp-3、引用"><span class="nav-number">2.2.</span> <span class="nav-text">    3、引用</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -763,7 +765,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共102.6k字</span>
+  <span class="post-count">博客全站共103.2k字</span>
 </div>
 
 <div class="powered-by">

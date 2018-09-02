@@ -113,23 +113,23 @@
 
 
 
-<meta name="description" content="JVM——垃圾收集算法&amp;nbsp; &amp;nbsp;&amp;nbsp;1、标记-清除算法(Mark-Sweep) &amp;nbsp; &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;最基础的收集算法，之所以这么说，是因为下面的其它算法都是基于这种思路并对其不足进行改进而得到的。 &amp;nbsp; &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;原理：分为标记-清除两个阶段&amp;nbsp; &amp;nbsp;&amp;nbsp;&amp;nbs">
+<meta name="description" content="&amp;nbsp; &amp;nbsp;&amp;nbsp;1、标记-清除算法(Mark-Sweep) &amp;nbsp; &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;最基础的收集算法，之所以这么说，是因为下面的其它算法都是基于这种思路并对其不足进行改进而得到的。 &amp;nbsp; &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;原理：分为标记-清除两个阶段&amp;nbsp; &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nb">
 <meta name="keywords" content="Java,JVM">
 <meta property="og:type" content="article">
 <meta property="og:title" content="JVM——垃圾收集算法">
 <meta property="og:url" content="http://yoursite.com/2018/09/02/Java/jvm/JVM—垃圾收集算法/index.html">
 <meta property="og:site_name" content="PikachuBLOG">
-<meta property="og:description" content="JVM——垃圾收集算法&amp;nbsp; &amp;nbsp;&amp;nbsp;1、标记-清除算法(Mark-Sweep) &amp;nbsp; &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;最基础的收集算法，之所以这么说，是因为下面的其它算法都是基于这种思路并对其不足进行改进而得到的。 &amp;nbsp; &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;原理：分为标记-清除两个阶段&amp;nbsp; &amp;nbsp;&amp;nbsp;&amp;nbs">
+<meta property="og:description" content="&amp;nbsp; &amp;nbsp;&amp;nbsp;1、标记-清除算法(Mark-Sweep) &amp;nbsp; &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;最基础的收集算法，之所以这么说，是因为下面的其它算法都是基于这种思路并对其不足进行改进而得到的。 &amp;nbsp; &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;原理：分为标记-清除两个阶段&amp;nbsp; &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nb">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/images/Mark-Sweep.png">
 <meta property="og:image" content="http://yoursite.com/images/Copying.png">
 <meta property="og:image" content="http://yoursite.com/images/Copy-algorithm.png">
 <meta property="og:image" content="http://yoursite.com/images/eden-survivor.png">
 <meta property="og:image" content="http://yoursite.com/images/Mark-Compact.png">
-<meta property="og:updated_time" content="2018-09-02T15:31:51.113Z">
+<meta property="og:updated_time" content="2018-09-02T15:39:57.704Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JVM——垃圾收集算法">
-<meta name="twitter:description" content="JVM——垃圾收集算法&amp;nbsp; &amp;nbsp;&amp;nbsp;1、标记-清除算法(Mark-Sweep) &amp;nbsp; &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;最基础的收集算法，之所以这么说，是因为下面的其它算法都是基于这种思路并对其不足进行改进而得到的。 &amp;nbsp; &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;原理：分为标记-清除两个阶段&amp;nbsp; &amp;nbsp;&amp;nbsp;&amp;nbs">
+<meta name="twitter:description" content="&amp;nbsp; &amp;nbsp;&amp;nbsp;1、标记-清除算法(Mark-Sweep) &amp;nbsp; &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;最基础的收集算法，之所以这么说，是因为下面的其它算法都是基于这种思路并对其不足进行改进而得到的。 &amp;nbsp; &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;原理：分为标记-清除两个阶段&amp;nbsp; &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nb">
 <meta name="twitter:image" content="http://yoursite.com/images/Mark-Sweep.png">
 
 
@@ -422,7 +422,7 @@
                   <span class="post-meta-item-text">字数统计</span>
                 
                 <span title="字数统计">
-                  855
+                  848
                 </span>
               
 
@@ -456,7 +456,7 @@
       
 
       
-        <h1 id="JVM——垃圾收集算法"><a href="#JVM——垃圾收集算法" class="headerlink" title="JVM——垃圾收集算法"></a>JVM——垃圾收集算法</h1><h3 id="nbsp-nbsp-nbsp-1、标记-清除算法-Mark-Sweep"><a href="#nbsp-nbsp-nbsp-1、标记-清除算法-Mark-Sweep" class="headerlink" title="&nbsp; &nbsp;&nbsp;1、标记-清除算法(Mark-Sweep)"></a>&nbsp; &nbsp;&nbsp;1、标记-清除算法(Mark-Sweep)</h3><hr>
+        <h3 id="nbsp-nbsp-nbsp-1、标记-清除算法-Mark-Sweep"><a href="#nbsp-nbsp-nbsp-1、标记-清除算法-Mark-Sweep" class="headerlink" title="&nbsp; &nbsp;&nbsp;1、标记-清除算法(Mark-Sweep)"></a>&nbsp; &nbsp;&nbsp;1、标记-清除算法(Mark-Sweep)</h3><hr>
 <p>&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;最基础的收集算法，之所以这么说，是因为下面的其它算法都是基于这种思路并对其不足进行改进而得到的。</p>
 <p>&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<strong>原理：分为标记-清除两个阶段</strong><br><br>&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.标记阶段：首先标记出所有需要回收的对象。<br><br>&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.清除阶段：标记完成后，统一回收被标记的对象<br><a id="more"></a><br>&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<strong>缺点：</strong><br><br>&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.效率问题：标记和清除过程效率都不高。<br><br>&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.空间问题：标记清除之后会产生大量的不连续的内存碎片，空间碎片太多可能会导致以后在程序运行过程中需要分配较大的对象时，无法找到足够的连续的内存空间而不得不提前触发另一次垃圾收集动作。<br></p>
 <p><img src="/images/Mark-Sweep.png" alt="Mark-Sweep.png"></p>
@@ -613,7 +613,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">157</span>
+                <span class="site-state-item-count">158</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -715,7 +715,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#JVM——垃圾收集算法"><span class="nav-number">1.</span> <span class="nav-text">JVM——垃圾收集算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#nbsp-nbsp-nbsp-1、标记-清除算法-Mark-Sweep"><span class="nav-number">1.0.1.</span> <span class="nav-text">    1、标记-清除算法(Mark-Sweep)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nbsp-nbsp-nbsp-2、复制算法-Copying"><span class="nav-number">1.0.2.</span> <span class="nav-text">    2、复制算法(Copying)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nbsp-nbsp-nbsp-3、标记整理算法-Mark-Compact"><span class="nav-number">1.0.3.</span> <span class="nav-text">    3、标记整理算法(Mark-Compact)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nbsp-nbsp-nbsp-4、分代收集算法-Generational-Collecting"><span class="nav-number">1.0.4.</span> <span class="nav-text">    4、分代收集算法(Generational Collecting)</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#nbsp-nbsp-nbsp-1、标记-清除算法-Mark-Sweep"><span class="nav-number">1.</span> <span class="nav-text">    1、标记-清除算法(Mark-Sweep)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nbsp-nbsp-nbsp-2、复制算法-Copying"><span class="nav-number">2.</span> <span class="nav-text">    2、复制算法(Copying)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nbsp-nbsp-nbsp-3、标记整理算法-Mark-Compact"><span class="nav-number">3.</span> <span class="nav-text">    3、标记整理算法(Mark-Compact)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nbsp-nbsp-nbsp-4、分代收集算法-Generational-Collecting"><span class="nav-number">4.</span> <span class="nav-text">    4、分代收集算法(Generational Collecting)</span></a></li></ol></div>
             
 
           </div>
@@ -756,7 +756,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共102.6k字</span>
+  <span class="post-count">博客全站共103.2k字</span>
 </div>
 
 <div class="powered-by">
