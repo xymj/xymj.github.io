@@ -60,6 +60,8 @@ categories:
 &ensp;&ensp;&ensp;注意: 如果正在使用CMS或ParallelOldGC,而应用程序的垃圾收集停顿时间并不长,那么继续使用现在的垃圾收集器是个好主意。使用最新的JDK时并不要求切换到G1收集器。
 
 
+
+
 ## 三、CMS垃圾收集器概述
 
 &ensp;&ensp;&ensp;并发标记清理(CMS, Concurrent Mark Sweep)收集器(也称为多并发低暂停的收集器)回收老年代内存(tenured generation)。它将垃圾回收中的绝大部分工作与应用程序的线程一起并发执行,以期能最小化暂停时间。通常多并发低暂停收集器**不复制或也不压缩存活的对象**。垃圾回收不移动存活的对象, 如果产生内存碎片问题,就会分配/占用更大的堆内存空间。
@@ -79,6 +81,9 @@ table th:first-of-type {
 3、再次标记(Remark)  | (Stop the World Event, 所有应用线程暂停) 查找在并发标记阶段漏过的对象，这些对象是在并发收集器完成对象跟踪之后由应用线程更新的。
 4、并发清理(Concurrent Sweep)  | 回收在标记阶段(marking phases)确定为不可及的对象. 死对象的回收将此对象占用的空间增加到一个空闲列表(free list),供以后的分配使用。死对象的合并可能在此时发生. 请注意,存活的对象并没有被移动.
 5、重置(Resetting)  | 清理数据结构,为下一个并发收集做准备.
+
+![cms_grabage_clean.png](/images/cms_grabage_clean.png)
+
 
 
 ### 2、CMS的GC步骤
@@ -174,6 +179,12 @@ table th:first-of-type {
 4、再次标记(Remark)  | (Stop the World Event,所有应用线程暂停) 完成堆内存中存活对象的标记。使用一个叫做 snapshot-at-the-beginning(SATB, 起始快照)的算法, 该算法比CMS所使用的算法要快速的多。
 5、清理(Cleanup)  | (Stop the World,所有应用线程暂停,清理线程并发执行)在存活对象和完全空闲的区域上执行统计(accounting)。(Stop the world)擦写 Remembered Sets。(Stop the world)重置空heap区并将他们返还给空闲列表(free list)。
 6、拷贝(Copying)  | (Stop the World,所有应用线程暂停) 转移或拷贝存活的对象到新的未使用的heap区(new unused regions)。只在年轻代发生时日志会记录为 `[GC pause (young)]`。如果在年轻代和老年代一起执行则会被日志记录为 `[GC Pause (mixed)]`。
+
+![g1_grabage_clean.png](/images/g1_grabage_clean.png)
+
+
+
+
 
 
 #### &ensp;2). G1老年代收集步骤
