@@ -142,7 +142,7 @@
 <meta property="og:image" content="http://yoursite.com/images/04_8_Remark_Phase_CN.png">
 <meta property="og:image" content="http://yoursite.com/images/04_9_Copying_Cleanup_Phase_CN.png">
 <meta property="og:image" content="http://yoursite.com/images/04_10_After_Copying_Cleanup_Phase_CN.png">
-<meta property="og:updated_time" content="2018-09-09T13:45:37.887Z">
+<meta property="og:updated_time" content="2018-09-09T14:37:05.049Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="G1垃圾收集器">
 <meta name="twitter:description" content="一、概述&amp;ensp;&amp;ensp;&amp;ensp;本文主要通过对比G1(Garbage-Firs Collector)和CMS(Concurrent Mark-Sweep Collector)垃圾收集器的堆内存结构，以及具体垃圾收集过程，每个过程中是怎么扫描虚拟机堆，来阐述G1垃圾收集器的原理和具体优势。 &amp;ensp;&amp;ensp;&amp;ensp;G1是一款面向服务器的垃圾收集器,主要针对配备多颗处理器及大容">
@@ -501,7 +501,43 @@
 <p>&ensp;&ensp;&ensp;注意: 如果正在使用CMS或ParallelOldGC,而应用程序的垃圾收集停顿时间并不长,那么继续使用现在的垃圾收集器是个好主意。使用最新的JDK时并不要求切换到G1收集器。</p>
 <h2 id="三、CMS垃圾收集器概述"><a href="#三、CMS垃圾收集器概述" class="headerlink" title="三、CMS垃圾收集器概述"></a>三、CMS垃圾收集器概述</h2><p>&ensp;&ensp;&ensp;并发标记清理(CMS, Concurrent Mark Sweep)收集器(也称为多并发低暂停的收集器)回收老年代内存(tenured generation)。它将垃圾回收中的绝大部分工作与应用程序的线程一起并发执行,以期能最小化暂停时间。通常多并发低暂停收集器<strong>不复制或也不压缩存活的对象</strong>。垃圾回收不移动存活的对象, 如果产生内存碎片问题,就会分配/占用更大的堆内存空间。</p>
 <h3 id="1、CMS垃圾收集阶段划分-Collection-Phases"><a href="#1、CMS垃圾收集阶段划分-Collection-Phases" class="headerlink" title="1、CMS垃圾收集阶段划分(Collection Phases)"></a>1、CMS垃圾收集阶段划分(Collection Phases)</h3><p>&ensp;&ensp;&ensp;CMS收集器在老年代堆内存的回收中执行分为以下阶段:</p>
-<p><style><br>table th:first-of-type {<br>    width: 245px;<br>}<br></style><br>操作阶段  |   主要操作<br>–|–<br>1、初始标记 (Initial Mark)  | (Stop the World Event,所有应用线程暂停) 在老年代(old generation)中的对象, 如果从年轻代(young generation)中能访问到, 则被 “标记,marked” 为可达的(reachable)。暂停时间一般持续时间较短,相对小的收集暂停时间.<br>2、并发标记 (Concurrent Marking)  | 在Java应用程序线程运行的同时遍历老年代(tenured generation)的可达对象图。扫描从被标记的对象开始,直到遍历完从root可达的所有对象。调整器(mutators)在并发阶段的2、3、5阶段执行,在这些阶段中新分配的所有对象(包括被提升的对象)都立刻标记为存活状态。<br>3、再次标记(Remark)  | (Stop the World Event, 所有应用线程暂停) 查找在并发标记阶段漏过的对象，这些对象是在并发收集器完成对象跟踪之后由应用线程更新的。<br>4、并发清理(Concurrent Sweep)  | 回收在标记阶段(marking phases)确定为不可及的对象. 死对象的回收将此对象占用的空间增加到一个空闲列表(free list),供以后的分配使用。死对象的合并可能在此时发生. 请注意,存活的对象并没有被移动.<br>5、重置(Resetting)  | 清理数据结构,为下一个并发收集做准备.</p>
+<style>
+table th:first-of-type {
+    width: 245px;
+}
+</style>
+
+
+<table>
+<thead>
+<tr>
+<th>操作阶段</th>
+<th>主要操作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1、初始标记 (Initial Mark)</td>
+<td>(Stop the World Event,所有应用线程暂停) 在老年代(old generation)中的对象, 如果从年轻代(young generation)中能访问到, 则被 “标记,marked” 为可达的(reachable)。暂停时间一般持续时间较短,相对小的收集暂停时间.</td>
+</tr>
+<tr>
+<td>2、并发标记 (Concurrent Marking)</td>
+<td>在Java应用程序线程运行的同时遍历老年代(tenured generation)的可达对象图。扫描从被标记的对象开始,直到遍历完从root可达的所有对象。调整器(mutators)在并发阶段的2、3、5阶段执行,在这些阶段中新分配的所有对象(包括被提升的对象)都立刻标记为存活状态。</td>
+</tr>
+<tr>
+<td>3、再次标记(Remark)</td>
+<td>(Stop the World Event, 所有应用线程暂停) 查找在并发标记阶段漏过的对象，这些对象是在并发收集器完成对象跟踪之后由应用线程更新的。</td>
+</tr>
+<tr>
+<td>4、并发清理(Concurrent Sweep)</td>
+<td>回收在标记阶段(marking phases)确定为不可及的对象. 死对象的回收将此对象占用的空间增加到一个空闲列表(free list),供以后的分配使用。死对象的合并可能在此时发生. 请注意,存活的对象并没有被移动.</td>
+</tr>
+<tr>
+<td>5、重置(Resetting)</td>
+<td>清理数据结构,为下一个并发收集做准备.</td>
+</tr>
+</tbody>
+</table>
 <p><img src="/images/cms_grabage_clean.png" alt="cms_grabage_clean.png"></p>
 <h3 id="2、CMS的GC步骤"><a href="#2、CMS的GC步骤" class="headerlink" title="2、CMS的GC步骤"></a>2、CMS的GC步骤</h3><h4 id="ensp-1-CMS的堆内存结构-Heap-Structure"><a href="#ensp-1-CMS的堆内存结构-Heap-Structure" class="headerlink" title="&ensp;1). CMS的堆内存结构(Heap Structure)"></a>&ensp;1). CMS的堆内存结构(Heap Structure)</h4><p>&ensp;&ensp;&ensp;堆内存被分为3个空间。年轻代(Young generation)分为 1个新生代空间(Eden)和2个存活区(survivor spaces)，这三个空间默认大小比例是8:1:1。老年代(Old generation)是一大块连续的空间, CMS垃圾回收(Object collection)就地解决(is done in place)垃圾对象, <strong>除了进行Full GC, 否则这个区域不会进行压缩</strong>(compaction).<br><img src="/images/03_1_CMS_Heap_Structure_CN.png" alt="CMS_Heap_Structure_CN.png"></p>
 <h4 id="ensp-2-CMS年轻代-Young-GC的工作方式"><a href="#ensp-2-CMS年轻代-Young-GC的工作方式" class="headerlink" title="&ensp;2). CMS年轻代(Young) GC的工作方式"></a>&ensp;2). CMS年轻代(Young) GC的工作方式</h4><p>&ensp;&ensp;&ensp;年轻代(young generation)用高亮的绿色表示, 老年代(old generation)用蓝色表示。如果程序运行了一段时间,那么 CMS 看起来就像下图这个样子，对象散落在老年代中的各处地方。在使用 CMS 时, 老年代的对象回收就地进行(deallocated in place)。<strong>他们不会被移动到其他地方，除了 Full GC, 否则内存空间不会进行压缩。</strong><br><img src="/images/03_2_How_yong_GC_Works_CN.png" alt="How_yong_GC_Works_CN.png"></p>
@@ -528,7 +564,41 @@
 <li>G1在已经使用堆内存的大小(Eden,Survivor,old generation,Humongous整体使用内存大小)，大约超过整个堆内存大小的75%的时候会触发Young GC。</li>
 </ul>
 <h3 id="4、G1的老年代收集"><a href="#4、G1的老年代收集" class="headerlink" title="4、G1的老年代收集"></a>4、G1的老年代收集</h3><p>&ensp;&ensp;&ensp;与CMS收集器相似, G1收集器也被设计为用来对老年代的对象进行低延迟(low pause)的垃圾收集。</p>
-<h4 id="ensp-1-G1垃圾收集阶段划分"><a href="#ensp-1-G1垃圾收集阶段划分" class="headerlink" title="&ensp;1). G1垃圾收集阶段划分"></a>&ensp;1). G1垃圾收集阶段划分</h4><p>&ensp;&ensp;&ensp;G1收集器在老年代堆内存中执行下面的这些阶段。 注意有些阶段也是年轻代垃圾收集的一部分。<br>操作阶段  |   主要操作<br>–|–<br>1、初始标记 (Initial Mark)  | (Stop the World Event,所有应用线程暂停) 此时会有一次 stop the world(STW)暂停事件. 在G1中, 这附加在(piggybacked on)一次正常的年轻代GC. 标记可能有引用指向老年代对象的survivor区(根regions).<br>2、扫描根区域(Root Region Scanning)  | 扫描 survivor 区中引用到老年代的引用。这个阶段应用程序的线程会继续运行。在年轻代GC可能发生之前此阶段必须完成。<br>3、并发标记(Concurrent Marking)  | 在整个堆中查找活着的对象。此阶段应用程序的线程正在运行。此阶段可以被年轻代GC打断(interrupted).<br>4、再次标记(Remark)  | (Stop the World Event,所有应用线程暂停) 完成堆内存中存活对象的标记。使用一个叫做 snapshot-at-the-beginning(SATB, 起始快照)的算法, 该算法比CMS所使用的算法要快速的多。<br>5、清理(Cleanup)  | (Stop the World,所有应用线程暂停,清理线程并发执行)在存活对象和完全空闲的区域上执行统计(accounting)。(Stop the world)擦写 Remembered Sets。(Stop the world)重置空heap区并将他们返还给空闲列表(free list)。<br>6、拷贝(Copying)  | (Stop the World,所有应用线程暂停) 转移或拷贝存活的对象到新的未使用的heap区(new unused regions)。只在年轻代发生时日志会记录为 <code>[GC pause (young)]</code>。如果在年轻代和老年代一起执行则会被日志记录为 <code>[GC Pause (mixed)]</code>。</p>
+<h4 id="ensp-1-G1垃圾收集阶段划分"><a href="#ensp-1-G1垃圾收集阶段划分" class="headerlink" title="&ensp;1). G1垃圾收集阶段划分"></a>&ensp;1). G1垃圾收集阶段划分</h4><p>&ensp;&ensp;&ensp;G1收集器在老年代堆内存中执行下面的这些阶段。 注意有些阶段也是年轻代垃圾收集的一部分。</p>
+<table>
+<thead>
+<tr>
+<th>操作阶段</th>
+<th>主要操作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1、初始标记 (Initial Mark)</td>
+<td>(Stop the World Event,所有应用线程暂停) 此时会有一次 stop the world(STW)暂停事件. 在G1中, 这附加在(piggybacked on)一次正常的年轻代GC. 标记可能有引用指向老年代对象的survivor区(根regions).</td>
+</tr>
+<tr>
+<td>2、扫描根区域(Root Region Scanning)</td>
+<td>扫描 survivor 区中引用到老年代的引用。这个阶段应用程序的线程会继续运行。在年轻代GC可能发生之前此阶段必须完成。</td>
+</tr>
+<tr>
+<td>3、并发标记(Concurrent Marking)</td>
+<td>在整个堆中查找活着的对象。此阶段应用程序的线程正在运行。此阶段可以被年轻代GC打断(interrupted).</td>
+</tr>
+<tr>
+<td>4、再次标记(Remark)</td>
+<td>(Stop the World Event,所有应用线程暂停) 完成堆内存中存活对象的标记。使用一个叫做 snapshot-at-the-beginning(SATB, 起始快照)的算法, 该算法比CMS所使用的算法要快速的多。</td>
+</tr>
+<tr>
+<td>5、清理(Cleanup)</td>
+<td>(Stop the World,所有应用线程暂停,清理线程并发执行)在存活对象和完全空闲的区域上执行统计(accounting)。(Stop the world)擦写 Remembered Sets。(Stop the world)重置空heap区并将他们返还给空闲列表(free list)。</td>
+</tr>
+<tr>
+<td>6、拷贝(Copying)</td>
+<td>(Stop the World,所有应用线程暂停) 转移或拷贝存活的对象到新的未使用的heap区(new unused regions)。只在年轻代发生时日志会记录为 <code>[GC pause (young)]</code>。如果在年轻代和老年代一起执行则会被日志记录为 <code>[GC Pause (mixed)]</code>。</td>
+</tr>
+</tbody>
+</table>
 <p><img src="/images/g1_grabage_clean.png" alt="g1_grabage_clean.png"></p>
 <h4 id="ensp-2-G1老年代收集步骤"><a href="#ensp-2-G1老年代收集步骤" class="headerlink" title="&ensp;2). G1老年代收集步骤"></a>&ensp;2). G1老年代收集步骤</h4><h5 id="ensp-ensp-a-初始标记阶段-Initial-Marking-Phase"><a href="#ensp-ensp-a-初始标记阶段-Initial-Marking-Phase" class="headerlink" title="&ensp;&ensp;a). 初始标记阶段(Initial Marking Phase)"></a>&ensp;&ensp;a). 初始标记阶段(Initial Marking Phase)</h5><p>&ensp;&ensp;&ensp;存活对象的初始标记被固定在年轻代垃圾收集里面。 在日志中被记为 GC pause (young)(inital-mark)。<br><img src="/images/04_6_Initial_Marking_Phase_CN.png" alt="Initial_Marking_Phase_CN.png"></p>
 <h5 id="ensp-ensp-b-并发标记阶段-Concurrent-Marking-Phase"><a href="#ensp-ensp-b-并发标记阶段-Concurrent-Marking-Phase" class="headerlink" title="&ensp;&ensp;b). 并发标记阶段(Concurrent Marking Phase)"></a>&ensp;&ensp;b). 并发标记阶段(Concurrent Marking Phase)</h5><p>&ensp;&ensp;&ensp;如果找到空的区域(如用红叉“X”标示的区域), 则会在 Remark 阶段立即移除。 当然,”清单(accounting)”信息决定了活跃度(liveness)的计算。<br><img src="/images/04_7_Concurrent_Marking_Phase_CN.png" alt="Concurrent_Marking_Phase_CN.png"></p>
