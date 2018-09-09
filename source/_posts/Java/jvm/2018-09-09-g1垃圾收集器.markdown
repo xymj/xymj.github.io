@@ -74,6 +74,8 @@ table th:first-of-type {
     width: 245px;
 }
 </style>
+
+
 操作阶段  |   主要操作
 --|--
 1、初始标记 (Initial Mark)  | (Stop the World Event,所有应用线程暂停) 在老年代(old generation)中的对象, 如果从年轻代(young generation)中能访问到, 则被 “标记,marked” 为可达的(reachable)。暂停时间一般持续时间较短,相对小的收集暂停时间.
@@ -171,6 +173,8 @@ table th:first-of-type {
 
 #### &ensp;1). G1垃圾收集阶段划分
 &ensp;&ensp;&ensp;G1收集器在老年代堆内存中执行下面的这些阶段。 注意有些阶段也是年轻代垃圾收集的一部分。
+
+
 操作阶段  |   主要操作
 --|--
 1、初始标记 (Initial Mark)  | (Stop the World Event,所有应用线程暂停) 此时会有一次 stop the world(STW)暂停事件. 在G1中, 这附加在(piggybacked on)一次正常的年轻代GC. 标记可能有引用指向老年代对象的survivor区(根regions).
