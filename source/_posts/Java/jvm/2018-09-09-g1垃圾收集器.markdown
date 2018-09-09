@@ -127,7 +127,7 @@ table th:first-of-type {
 ![After_Sweeping_CN.png](/images/03_7_After_Sweeping_CN.png)
 
 
-### 四、G1垃圾收集器概述
+## 四、G1垃圾收集器概述
 ### 1、G1的堆内存结构
 &ensp;&ensp;&ensp;堆内存被划分为固定大小的多个区域。每个heap区(Region)的大小在JVM启动时就确定了。 JVM 通常生成 2000 个左右的heap区, 根据堆内存的总大小,区的size范围允许为 1Mb 到 32Mb。
 ![G1_Heap_Structure_CN.png](/images/04_1_G1_Heap_Structure_CN.png)
@@ -229,10 +229,10 @@ table th:first-of-type {
     - 老年代的选择基于其活跃度(liveness)。
 
 
-### 五、G1命令行参数
+## 五、G1命令行参数
 
 
-### 六、G1的GC日志分析
+## 六、G1的GC日志分析
 
 
 
