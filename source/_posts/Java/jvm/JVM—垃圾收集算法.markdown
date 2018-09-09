@@ -1,6 +1,6 @@
 ---
 layout: "post"
-title: "JVM——垃圾收集算法"
+title: "JVM—垃圾收集算法"
 date: "2018-09-02 23:12"
 tags:
   - Java

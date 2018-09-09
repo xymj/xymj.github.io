@@ -1,0 +1,226 @@
+---
+layout: "post"
+title: "G1垃圾收集器"
+date: "2018-09-09 13:12"
+tags:
+  - Java
+  - JVM
+categories:
+  - Java
+---
+
+## 一、概述
+
+&ensp;&ensp;&ensp;本文主要通过对比G1(Garbage-Firs Collector)和CMS(Concurrent Mark-Sweep Collector)垃圾收集器的堆内存结构，以及具体垃圾收集过程，每个过程中是怎么扫描虚拟机堆，来阐述G1垃圾收集器的原理和具体优势。
+
+&ensp;&ensp;&ensp;G1是一款面向服务器的垃圾收集器,主要针对配备多颗处理器及大容量内存的机器。以极高概率满足GC停顿时间要求的同时,还具备高吞吐量性能特征. 在Oracle JDK 7 update 4 及以上版本中得到完全支持, 专为以下应用程序设计:
+
+- 可以像CMS收集器一样,GC操作与应用的线程一起并发执行。
+- 紧凑的空闲内存区间且没有很长的GC停顿时间。
+- 需要可预测的GC暂停耗时。
+- 不想牺牲太多吞吐量性能。
+- 启动后不需要请求更大的Java堆。
+<!--more-->
+&ensp;&ensp;&ensp;G1的长期目标是取代CMS(Concurrent Mark-Sweep Collector, 并发标记-清除)。因为特性的不同使G1成为比CMS更好的解决方案。一个区别是,G1是一款压缩型的收集器。G1通过有效的压缩完全避免了对细微空闲内存空间的分配,不用依赖于regions，这不仅大大简化了收集器，而且还消除了潜在的内存碎片问题。除压缩以外，G1的垃圾收集停顿也比CMS容易估计，也允许用户自定义所希望的停顿参数。
+
+## 二、G1、CMS垃圾收集器内存结构
+&ensp;&ensp;&ensp;G1出现之前的上一代垃圾收集器(串行serial, 并行parallel, 以及CMS)都把堆内存划分为固定大小的三个部分: 年轻代(young generation), 年老代(old generation), 以及持久代(permanent generation)。Java堆内存的每个对象都存放在这三个区域中的一个。
+![HeapStructure_CN.png](/images/02_1_HeapStructure_CN.png)
+
+&ensp;&ensp;&ensp;G1采用一种不同的方式来管理堆内存。堆内存被划分为多个大小相等的heap区,每个heap区都是逻辑上连续的一段内存(virtual memory)。其中一部分区域被当成老一代收集器相同的角色(eden, survivor, old), 但每个角色的区域个数都不是固定的。这在内存使用上提供了更多的灵活性。
+![G1HeapAllocation_CN.png](/images/02_2_G1HeapAllocation_CN.png)
+
+&ensp;&ensp;&ensp;G1执行垃圾回收的处理方式与CMS相似。G1在全局标记阶段(global marking phase)并发执行, 以确定堆内存中哪些对象是存活的。标记阶段完成后,G1就可以知道哪些heap区的empty空间最大。它会首先回收这些区,通常会得到大量的自由空间。这也是为什么这种垃圾收集方法叫做Garbage-First(垃圾优先)的原因。顾名思义, G1将精力集中放在可能布满可收回对象的区域, 可回收对象(reclaimable objects)也就是所谓的垃圾。G1使用暂停预测模型(pause prediction model)来达到用户定义的目标暂停时间,并根据目标暂停时间来选择此次进行垃圾回收的heap区域数量。
+
+&ensp;&ensp;&ensp;被G1标记为适合回收的heap区将使用转移(evacuation)的方式进行垃圾回收。G1将一个或多个heap区域中的对象拷贝到其他的单个区域中,并在此过程中压缩和释放内存. 在多核CPU上转移是并行执行的(parallel on multi-processors), 这样能减少停顿时间并增加吞吐量。因此,每次垃圾收集时, G1都会持续不断地减少碎片, 并且在用户给定的暂停时间内执行。这比以前的方法强大了很多。CMS垃圾收集器(Concurrent Mark Sweep,并发标记清理)不进行压缩。ParallelOld垃圾收集只对整个堆执行压缩,从而导致相当长的暂停时间。
+
+&ensp;&ensp;&ensp;需要强调的是, G1并不是一款实时垃圾收集器(real-time collector)。能以极高的概率在设定的目标暂停时间内完成,但不保证绝对在这个时间内完成。基于以前收集的各种监控数据,G1会根据用户指定的目标时间来预估能回收多少个heap区。因此,收集器有一个相当精确的heap区耗时计算模型,并根据该模型来确定在给定时间内去回收哪些heap区。
+
+&ensp;&ensp;&ensp;注意：G1分为两个阶段: 并发阶段(concurrent, 与应用线程一起运行, 如: 细化 refinement、标记 marking、清理 cleanup) 和并行阶段(parallel, 多线程执行, 如: 停止所有JVM线程, stop the world)。而FullGC(完整垃圾收集)仍然是单线程的, 但如果进行适当的调优,则应用程序应该能够避免 full GC。
+
+
+### 1、G1内存占用(Footprint)
+
+&ensp;&ensp;&ensp;如果从 ParallelOldGC 或者 CMS收集器迁移到 G1, 您可能会看到JVM进程占用更多的内存(a larger JVM process size)。这在很大程度上与 “accounting” 数据结构有关, 如 Remembered Sets 和 Collection Sets。
+
+&ensp;&ensp;&ensp;Remembered Sets 简称 RSets, 跟踪指向某个heap区内的对象引用. 堆内存中的每个区都有一个 RSet。 RSet 使heap区能并行独立地进行垃圾集合。 RSets的总体影响小于5%.
+
+&ensp;&ensp;&ensp;Collection Sets 简称 CSets, 收集集合, 在一次GC中将执行垃圾回收的heap区。GC时在CSet中的所有存活数据(live data)都会被转移(复制/移动)。集合中的heap区可以是 Eden, survivor, old generation。CSets所占用的JVM内存小于1%。
+
+### 2、推荐使用G1的场景(Recommended Use Cases)
+
+&ensp;&ensp;&ensp;G1的首要目标是为需要大量内存的系统提供一个保证**GC低延迟**的解决方案。也就是说堆内存在6GB及以上,稳定和可预测的暂停时间小于0.5秒。
+
+&ensp;&ensp;&ensp;如果应用程序具有如下的一个或多个特征,那么将垃圾收集器从CMS或ParallelOldGC切换到G1将会大大提升性能。
+
+- Full GC 次数太频繁或者消耗时间太长.
+- 对象分配的频率或代数提升(promotion)显著变化.
+- 受够了太长的垃圾回收或内存整理时间(超过0.5~1秒)
+
+&ensp;&ensp;&ensp;注意: 如果正在使用CMS或ParallelOldGC,而应用程序的垃圾收集停顿时间并不长,那么继续使用现在的垃圾收集器是个好主意。使用最新的JDK时并不要求切换到G1收集器。
+
+
+## 三、CMS垃圾收集器概述
+
+&ensp;&ensp;&ensp;并发标记清理(CMS, Concurrent Mark Sweep)收集器(也称为多并发低暂停的收集器)回收老年代内存(tenured generation)。它将垃圾回收中的绝大部分工作与应用程序的线程一起并发执行,以期能最小化暂停时间。通常多并发低暂停收集器**不复制或也不压缩存活的对象**。垃圾回收不移动存活的对象, 如果产生内存碎片问题,就会分配/占用更大的堆内存空间。
+
+### 1、CMS垃圾收集阶段划分(Collection Phases)
+
+&ensp;&ensp;&ensp;CMS收集器在老年代堆内存的回收中执行分为以下阶段:
+<style>
+table th:first-of-type {
+    width: 245px;
+}
+</style>
+操作阶段  |   主要操作
+--|--
+1、初始标记 (Initial Mark)  | (Stop the World Event,所有应用线程暂停) 在老年代(old generation)中的对象, 如果从年轻代(young generation)中能访问到, 则被 “标记,marked” 为可达的(reachable)。暂停时间一般持续时间较短,相对小的收集暂停时间.
+2、并发标记 (Concurrent Marking)  | 在Java应用程序线程运行的同时遍历老年代(tenured generation)的可达对象图。扫描从被标记的对象开始,直到遍历完从root可达的所有对象。调整器(mutators)在并发阶段的2、3、5阶段执行,在这些阶段中新分配的所有对象(包括被提升的对象)都立刻标记为存活状态。
+3、再次标记(Remark)  | (Stop the World Event, 所有应用线程暂停) 查找在并发标记阶段漏过的对象，这些对象是在并发收集器完成对象跟踪之后由应用线程更新的。
+4、并发清理(Concurrent Sweep)  | 回收在标记阶段(marking phases)确定为不可及的对象. 死对象的回收将此对象占用的空间增加到一个空闲列表(free list),供以后的分配使用。死对象的合并可能在此时发生. 请注意,存活的对象并没有被移动.
+5、重置(Resetting)  | 清理数据结构,为下一个并发收集做准备.
+
+
+### 2、CMS的GC步骤
+
+#### &ensp;1). CMS的堆内存结构(Heap Structure)
+&ensp;&ensp;&ensp;堆内存被分为3个空间。年轻代(Young generation)分为 1个新生代空间(Eden)和2个存活区(survivor spaces)，这三个空间默认大小比例是8:1:1。老年代(Old generation)是一大块连续的空间, CMS垃圾回收(Object collection)就地解决(is done in place)垃圾对象, **除了进行Full GC, 否则这个区域不会进行压缩**(compaction).
+![CMS_Heap_Structure_CN.png](/images/03_1_CMS_Heap_Structure_CN.png)
+
+
+#### &ensp;2). CMS年轻代(Young) GC的工作方式
+&ensp;&ensp;&ensp;年轻代(young generation)用高亮的绿色表示, 老年代(old generation)用蓝色表示。如果程序运行了一段时间,那么 CMS 看起来就像下图这个样子，对象散落在老年代中的各处地方。在使用 CMS 时, 老年代的对象回收就地进行(deallocated in place)。**他们不会被移动到其他地方，除了 Full GC, 否则内存空间不会进行压缩。**
+![How_yong_GC_Works_CN.png](/images/03_2_How_yong_GC_Works_CN.png)
+
+#### &ensp;3). 年轻代垃圾回收(Young Generation Collection)
+&ensp;&ensp;&ensp;Eden区和survivor区中的存活对象被拷贝到另一个空的survivor 区。存活时间更长,达到阀值的对象会被提升到老年代(promoted to old generation)。
+![Yong_Generation_Collection_CN.png](/images/03_3_Yong_Generation_Collection_CN.png)
+
+#### &ensp;4). 年轻代(Young) GC 之后
+&ensp;&ensp;&ensp;年轻代(Young)进行一次垃圾回收之后, Eden 区被清理干净(cleared),两个 survivor 区中的一个也被清理干净了,如下图。图中新提升到老年代的对象用深蓝色来标识。绿色的部分是年轻代中存活的对象,但还没被提升到老年代中。
+![After_Young_GC_CN.png](/images/03_4_After_Young_GC_CN.png)
+
+
+#### &ensp;5). CMS的老年代回收-标记(Old Generation Collection)
+&ensp;&ensp;&ensp;两次stop the world事件发生在: 初始标记(initial mark)以及重新标记(remark)阶段。当老年代达到一定的占有率时,CMS垃圾回收器就开始工作。
+&ensp;&ensp;&ensp;&ensp;a). 初始标记(Initial mark)阶段的停顿时间很短,在此阶段存活的(live)、可及的(reachable), 对象被记下来.
+&ensp;&ensp;&ensp;&ensp;b). 并发标记(Concurrent marking)在程序继续运行的同时找出存活的对象。
+&ensp;&ensp;&ensp;&ensp;c). 在第3阶段(remark phase), 查找在第2阶段(concurrent marking)中错过的对象。
+![Old_Generation_Collection_in_CMS_CN.png](/images/03_5_Old_Generation_Collection_in_CMS_CN.png)
+
+
+#### &ensp;6). 老年代回收-并发清理(Concurrent Sweep)
+&ensp;&ensp;&ensp;在前面阶段**未被标记的对象**(Unmarked),即**已死对象**(Dead Objects)将会就地释放(deallocated in place)。此处**没有压缩**(compaction)。
+![Concurrent_Sweep_CN.png](/images/03_6_Concurrent_Sweep_CN.png)
+
+#### &ensp;7). 老年代回收 - 清理之后(After Sweeping)
+&ensp;&ensp;&ensp;在第4步(Sweeping phase)之后, 可以看到很多内存被释放了。还应该注意到,这里并没有执行内存压缩整理(no compaction)。
+
+&ensp;&ensp;&ensp;最后, CMS 收集器进入第5阶段, 重置(resetting phase), 然后等候下一次的GC阀值到来(GC threshold)。
+![After_Sweeping_CN.png](/images/03_7_After_Sweeping_CN.png)
+
+
+### 四、G1垃圾收集器概述
+### 1、G1的堆内存结构
+&ensp;&ensp;&ensp;堆内存被划分为固定大小的多个区域。每个heap区(Region)的大小在JVM启动时就确定了。 JVM 通常生成 2000 个左右的heap区, 根据堆内存的总大小,区的size范围允许为 1Mb 到 32Mb。
+![G1_Heap_Structure_CN.png](/images/04_1_G1_Heap_Structure_CN.png)
+
+
+### 2、G1 堆空间分配
+&ensp;&ensp;&ensp;G1的堆内存上一个个区域(regions)被映射为逻辑上的 Eden, Survivor, 和 old generation(老年代)空间。
+
+&ensp;&ensp;&ensp;图中的颜色标识了每一个区域属于哪个角色。存活的对象从一块区域转移(复制或移动)到另一块区域。设计成 heap 区的目的是为了并行地进行垃圾回收的同时停止/或不停止其他应用程序线程.
+
+&ensp;&ensp;&ensp;图中heap区可以分配为 Eden, Survivor, 或 old generation(老年代)区。此外,还有第四种类型的对象被称为巨无霸区域(Humongous regions),这种巨无霸区是设计了用来保存比标准块(standard region)大50%及以上的对象, 它们存储在一组连续的区中。最后一个类型是堆内存中的未使用区(unused areas)。
+![G1HeapAllocation_CN.png](/images/02_2_G1HeapAllocation_CN.png)
+
+### 3、G1的年轻代收集
+#### &ensp;1). G1中的年轻代(Young Generation)
+&ensp;&ensp;&ensp;堆被分为大约2000个区，这些区大小相同。每个区最小size为1 Mb, 最大size为 32Mb。蓝色的区保存老年代对象,绿色区域保存年轻代对象。并且G1中各代的heap区不像老一代垃圾收集器一样要求各部分是连续的。
+![Young_Generation_in_G1_CN.png](/images/04_3_Young_Generation_in_G1_CN.png)
+
+
+#### &ensp;2). G1中的一次年轻代GC
+&ensp;&ensp;&ensp;存活的对象被转移(copied or moved)到一个或多个存活区(survivor regions)。 如果存活时间达到阀值,这部分对象就会被提升到老年代(promoted to old generation regions)。
+
+&ensp;&ensp;&ensp;此时会有一次 stop the world(STW)暂停。会计算出 Eden大小和 survivor 大小,给下一次年轻代GC使用。清单统计信息(Accounting)保存了用来辅助计算size。诸如暂停时间目标之类的东西也会纳入考虑。
+&ensp;&ensp;&ensp;这种方法使得调整各代区域的尺寸很容易, 让其更大或更小一些以满足需要。
+![A_Young_GC_in_G1_CN.png](/images/04_4_A_Young_GC_in_G1_CN.png)
+
+#### &ensp;3). G1的一次年轻代GC完成后
+&ensp;&ensp;&ensp;存活对象被转移到存活区(survivor regions) 或 老年代(old generation regions)。刚刚被提升上来的对象用深绿色显示。Survivor 区用绿色表示。
+![End_of_Young_GC_with_G1_CN.png](/images/04_5_End_of_Young_GC_with_G1_CN.png)
+
+#### &ensp;4). G1的年轻代收集归纳
+
+- 堆一整块内存空间,被分为多个heap区(regions)。
+- 年轻代内存由一组不连续的heap区组成. 这使得在需要时很容易进行容量调整。
+- 年轻代的垃圾收集,或者叫 young GC, 会有 stop the world 事件。在操作时所有的应用程序线程都会被暂停(stopped)。
+- 年轻代 GC 通过多线程并行进行。
+- 存活的对象被拷贝到新的 survivor 区或者老年代。
+- G1在已经使用堆内存的大小(Eden,Survivor,old generation,Humongous整体使用内存大小)，大约超过整个堆内存大小的75%的时候会触发Young GC。
+
+
+### 4、G1的老年代收集
+&ensp;&ensp;&ensp;与CMS收集器相似, G1收集器也被设计为用来对老年代的对象进行低延迟(low pause)的垃圾收集。
+
+#### &ensp;1). G1垃圾收集阶段划分
+&ensp;&ensp;&ensp;G1收集器在老年代堆内存中执行下面的这些阶段。 注意有些阶段也是年轻代垃圾收集的一部分。
+操作阶段  |   主要操作
+--|--
+1、初始标记 (Initial Mark)  | (Stop the World Event,所有应用线程暂停) 此时会有一次 stop the world(STW)暂停事件. 在G1中, 这附加在(piggybacked on)一次正常的年轻代GC. 标记可能有引用指向老年代对象的survivor区(根regions).
+2、扫描根区域(Root Region Scanning)  | 扫描 survivor 区中引用到老年代的引用。这个阶段应用程序的线程会继续运行。在年轻代GC可能发生之前此阶段必须完成。
+3、并发标记(Concurrent Marking)  | 在整个堆中查找活着的对象。此阶段应用程序的线程正在运行。此阶段可以被年轻代GC打断(interrupted).
+4、再次标记(Remark)  | (Stop the World Event,所有应用线程暂停) 完成堆内存中存活对象的标记。使用一个叫做 snapshot-at-the-beginning(SATB, 起始快照)的算法, 该算法比CMS所使用的算法要快速的多。
+5、清理(Cleanup)  | (Stop the World,所有应用线程暂停,清理线程并发执行)在存活对象和完全空闲的区域上执行统计(accounting)。(Stop the world)擦写 Remembered Sets。(Stop the world)重置空heap区并将他们返还给空闲列表(free list)。
+6、拷贝(Copying)  | (Stop the World,所有应用线程暂停) 转移或拷贝存活的对象到新的未使用的heap区(new unused regions)。只在年轻代发生时日志会记录为 `[GC pause (young)]`。如果在年轻代和老年代一起执行则会被日志记录为 `[GC Pause (mixed)]`。
+
+
+#### &ensp;2). G1老年代收集步骤
+
+##### &ensp;&ensp;a). 初始标记阶段(Initial Marking Phase)
+&ensp;&ensp;&ensp;存活对象的初始标记被固定在年轻代垃圾收集里面。 在日志中被记为 GC pause (young)(inital-mark)。
+![Initial_Marking_Phase_CN.png](/images/04_6_Initial_Marking_Phase_CN.png)
+
+##### &ensp;&ensp;b). 并发标记阶段(Concurrent Marking Phase)
+&ensp;&ensp;&ensp;如果找到空的区域(如用红叉“X”标示的区域), 则会在 Remark 阶段立即移除。 当然,"清单(accounting)"信息决定了活跃度(liveness)的计算。
+![Concurrent_Marking_Phase_CN.png](/images/04_7_Concurrent_Marking_Phase_CN.png)
+
+
+
+##### &ensp;&ensp;c). 再次标记阶段(Remark Phase)
+&ensp;&ensp;&ensp;空的区域被移除并回收。现在计算所有区域的活跃度(Region liveness)。
+![Remark_Phase_CN.png](/images/04_8_Remark_Phase_CN.png)
+
+
+##### &ensp;&ensp;d). 拷贝/清理阶段(Copying/Cleanup)
+&ensp;&ensp;&ensp;G1选择“活跃度(liveness)”最低的区域, 这些区域可以最快的完成回收。然后这些区域和年轻代GC在同时被垃圾收集，在日志被标识为 [GC pause (mixed)]。 所以年轻代和老年代都在同一时间被垃圾收集。
+![Copying_Cleanup_Phase_CN.png](/images/04_9_Copying_Cleanup_Phase_CN.png)
+
+##### &ensp;&ensp;e). 拷贝/清理之后(After Copying/Cleanup)
+&ensp;&ensp;&ensp;所选择的区域被收集和压缩到下图所示的深蓝色区域和深绿色区域。
+![After_Copying_Cleanup_Phase_CN.png](/images/04_10_After_Copying_Cleanup_Phase_CN.png)
+
+
+#### &ensp;3). G1的老年代收集归纳
+- 并发标记阶段(Concurrent Marking Phase)
+    - 活跃度信息在程序运行的时候被并行计算出来。
+    - 活跃度(liveness)信息标识出哪些区域在转移暂停期间最适合回收.
+- 再次标记阶段(Remark Phase)
+    - 使用的 Snapshot-at-the-Beginning (SATB, 开始快照) 算法比起 CMS所用的算法要快得多。
+    - 完全空的区域直接被回收。
+- 拷贝/清理阶段(Copying/Cleanup Phase)
+    - 年轻代与老年代同时进行回收。
+    - 老年代的选择基于其活跃度(liveness)。
+
+
+### 五、G1命令行参数
+
+
+### 六、G1的GC日志分析
+
+
+
+##### 相关参考资源：
+[G1垃圾收集器入门](https://blog.csdn.net/renfufei/article/details/41897113)
+[Getting Started with the G1 Garbage Collector](http://www.oracle.com/webfolder/technetwork/tutorials/obe/java/G1GettingStarted/index.html)
