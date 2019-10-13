@@ -5,7 +5,7 @@ tags: LeetCode
 categories: LeetCode
 ---
 
-# 3. Longest Substring Without Repeating Characters 
+# 3. Longest Substring Without Repeating Characters
 
 
 
@@ -42,7 +42,7 @@ public:
 		{
 			if (hash.count(s[j]))
 			{
-				//i之前的包括i指向的元素一定包含重复元素，所以在此取i的值的时候要比较当前重复元素时出现在i前面还是后面
+				//i之前的包括i指向的元素一定包含重复元素，所以在此取i的值的时候要比较当前重复元素是出现在i前面还是后面
 				//后面的话更新i的值，否则i值不变，例如abba
 				i = max(hash[s[j]], i);
 			}
@@ -54,3 +54,30 @@ public:
 };
 ```
 
+``` java
+class Solution {
+    public int lengthOfLongestSubstring(String s) {
+        if (null == s) {
+            return 0;
+        }
+
+        int size = s.length();
+        if (size == 0) {
+            return 0;
+        }
+        Map<Character, Integer> hash = new HashMap();
+        int after = 0;
+        int maxLength = 0;
+        for (int pre = 0; pre < size; pre++) {
+            char c = s.charAt(pre);
+            if (hash.containsKey(c)) {
+                after = Math.max(hash.get(c), after);
+            }
+            hash.put(c, pre + 1);//包括自身在内，之前的元素个数
+            maxLength = Math.max(maxLength, pre - after + 1);
+        }
+
+        return maxLength;
+    }
+}
+```

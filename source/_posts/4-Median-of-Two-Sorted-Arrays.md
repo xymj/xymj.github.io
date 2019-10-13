@@ -5,17 +5,17 @@ tags: LeetCode
 categories: LeetCode			
 ---
 
-# 4. Median of Two Sorted Arrays 
+# 4. Median of Two Sorted Arrays
 
 There are two sorted arrays nums1 and nums2 of size m and n respectively.
 Find the median of the two sorted arrays.The overall run time complexity should be O(log(m + n)).
 
-**Example 1:** 
+**Example 1:**
 nums1 = [1, 3]
 nums2 = [2]
 The median is 2.0
 
-**Example2:** 
+**Example2:**
 nums1 = [1, 2]
 nums2 = [3, 4]
 The median is(2 + 3) / 2 = 2.5
@@ -53,7 +53,7 @@ public:
 		{
 			return getKth(nums1, 0, lenA, nums2, 0, lenB, total / 2 + 1);//如果为奇数，寻找第total/2+1小元素
 		}
-		else//如果为偶数，寻找第total/2+1小和total/小元素
+		else//如果为偶数，寻找第total/2+1小和total/2 小元素
 		{
 			double d1 = getKth(nums1, 0, lenA, nums2, 0, lenB, total / 2 + 1);
 			double d2 = getKth(nums1, 0, lenA, nums2, 0, lenB, total / 2);
@@ -95,5 +95,90 @@ int main()
 	Solution s;
 	double res = s.findMedianSortedArrays(nums1, nums2);
 	return 0;
+}
+```
+
+```java
+class Solution {
+    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        int len1 = nums1.length;
+        int len2 = nums2.length;
+        if (len1 == 0 && len2 == 0) {
+            return 0;
+        }
+
+        int total = len1 + len2;
+        if ((total & 1) == 1) {
+            return getKth(nums1, 0, len1, nums2, 0, len2, total / 2 + 1);
+        } else {
+            double pre = getKth(nums1, 0, len1, nums2, 0, len2, total / 2);
+            double after = getKth(nums1, 0, len1, nums2, 0, len2, total / 2 + 1);
+            return (pre + after) / 2;
+        }
+    }
+
+    public int getKth(int[] nums1, int start1, int len1, int[] nums2, int start2, int len2, int k) {
+        if (len2 < len1) {
+            return getKth(nums2, start2, len2, nums1, start1, len1, k);
+        }
+
+        if (len1 == 0) {
+            return nums2[start2 + k - 1];
+        }
+
+        if (k == 1) {
+            return Math.min(nums1[start1], nums2[start2]);
+        }
+
+        int elementNum1 = Math.min(len1, k / 2);
+        int elementNum2 = k - elementNum1;
+
+        if (nums1[start1 + elementNum1 - 1] < nums2[start2 + elementNum2 -1]) {
+            return getKth(nums1, start1 + elementNum1, len1 - elementNum1, nums2, start2, len2, k - elementNum1);
+        } else if (nums1[start1 + elementNum1 - 1] > nums2[start2 + elementNum2 -1]) {
+            return getKth(nums1, start1, len1, nums2, start2 + elementNum2, len2 - elementNum2, k - elementNum2);
+        } else {
+            return nums1[start1 + elementNum1 - 1];
+        }
+
+    }
+}
+
+public class MainClass {
+    public static int[] stringToIntegerArray(String input) {
+        input = input.trim();
+        input = input.substring(1, input.length() - 1);
+        if (input.length() == 0) {
+          return new int[0];
+        }
+
+        String[] parts = input.split(",");
+        int[] output = new int[parts.length];
+        for(int index = 0; index < parts.length; index++) {
+            String part = parts[index].trim();
+            output[index] = Integer.parseInt(part);
+        }
+        return output;
+    }
+
+    public static String doubleToString(double input) {
+        return new DecimalFormat("0.00000").format(input);
+    }
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+        String line;
+        while ((line = in.readLine()) != null) {
+            int[] nums1 = stringToIntegerArray(line);
+            line = in.readLine();
+            int[] nums2 = stringToIntegerArray(line);
+
+            double ret = new Solution().findMedianSortedArrays(nums1, nums2);
+
+            String out = doubleToString(ret);
+
+            System.out.print(out);
+        }
+    }
 }
 ```
