@@ -5,7 +5,7 @@ tags: LeetCode
 categories: LeetCode
 ---
 
-# 6. ZigZag Conversion 
+# 6. ZigZag Conversion
 
 The string `"PAYPALISHIRING"` is written in a zigzag pattern on a given number of rows like this: (you may want to display this pattern in a fixed font for better legibility(易读的))
 
@@ -115,3 +115,75 @@ public:
 };
 ```
 
+```java
+class Solution {
+    public String convert(String s, int numRows) {
+        if (null == s) {
+            return s;
+        }
+        int len = s.length();
+        if (len == 1) {
+            return s;
+        }
+
+        String[] rowStrs = new String[numRows];
+        for (int i = 0;i < numRows;i++) {
+            rowStrs[i] = "";
+        }
+
+        for (int i = 0;i < len;) {
+            for (int j = 0;j < numRows && i < len;j++) {
+                rowStrs[j] += s.charAt(i);
+                i++;
+            }
+            for (int j = numRows - 2;j > 0 && i < len;j--) {
+                rowStrs[j] += s.charAt(i);
+                i++;
+            }
+        }
+
+        StringBuilder resBuilder = new StringBuilder();
+        Arrays.asList(rowStrs).forEach(str -> resBuilder.append(str));
+
+        return resBuilder.toString();
+    }
+}
+```
+
+```java
+class Solution {
+    public String convert(String s, int numRows) {
+        if (null == s) {
+            return s;
+        }
+        int len = s.length();
+        if (len == 1) {
+            return s;
+        }
+        List<String> rowStrs = new ArrayList(numRows);
+        for (int i = 0;i < numRows;i++) {
+            rowStrs.add("");
+        }
+
+        for (int i = 0;i < len;) {
+            for (int j = 0;j < numRows && i < len;j++) {
+                String rowStr = rowStrs.get(j);
+                rowStr += s.charAt(i);
+                rowStrs.set(j, rowStr);
+                i++;
+            }
+            for (int j = numRows - 2;j > 0 && i < len;j--) {
+                String rowStr = rowStrs.get(j);
+                rowStr += s.charAt(i);
+                rowStrs.set(j, rowStr);
+                i++;
+            }
+        }
+
+        StringBuilder resBuilder = new StringBuilder();
+        rowStrs.forEach(str -> resBuilder.append(str));
+
+        return resBuilder.toString();
+    }
+}
+```

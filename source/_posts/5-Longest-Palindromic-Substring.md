@@ -65,3 +65,43 @@ public:
 };
 ```
 
+```java
+class Solution {
+    public String longestPalindrome(String s) {
+        if (null == s) {
+            return "";
+        }
+
+        int len = s.length();
+        String res = "";
+        for (int i = 0;i < len;i++) {
+            String palindrome1 = getPalindromeStr(s, i, i);
+            if (palindrome1.length() > res.length()) {
+                res = palindrome1;
+            }
+
+            String palindrome2 = getPalindromeStr(s, i, i + 1);
+            if (palindrome2.length() > res.length()) {
+                res = palindrome2;
+            }
+        }
+
+        return res;
+    }
+
+    public String getPalindromeStr(String s,int left, int right) {
+        while(left >=0 && right < s.length()) {
+            char leftChar = s.charAt(left);
+            char rightChar = s.charAt(right);
+            if (leftChar == rightChar) {
+                left--;
+                right++;
+            } else {
+                break;
+            }
+        }
+
+        return s.substring(left + 1, right);
+    }
+}
+```
