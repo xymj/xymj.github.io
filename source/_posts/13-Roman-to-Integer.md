@@ -83,3 +83,42 @@ public:
 };
 ```
 
+```java
+class Solution {
+    public int romanToInt(String s) {
+        if (null == s) {
+            return 0;
+        }
+        int len = s.length();
+        if (len == 0) {
+            return 0;
+        }
+
+        Map<Character, Integer> hash = new HashMap();
+        hash.put('I', 1);
+        hash.put('V', 5);
+        hash.put('X', 10);
+        hash.put('L', 50);
+        hash.put('C', 100);
+        hash.put('D', 500);
+        hash.put('M', 1000);
+
+        int res = 0;
+        char maxChar = 'I';
+        for (int i = len - 1;i >= 0;i--) {
+            char cur = s.charAt(i);
+            int curNum = hash.get(cur);
+            int maxCharNum = hash.get(maxChar);
+            if (curNum >= maxCharNum) {
+                res += curNum;
+                maxChar = cur;
+            } else {
+                System.out.println(res);
+                res -= curNum;
+            }
+        }
+
+        return res;
+    }
+}
+```
