@@ -14,7 +14,7 @@ Input:Digit string "23"
 Output: ["ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"].
 
 Note:
-Although the above answer is in lexicographical order, your answer could be in any order you want. 
+Although the above answer is in lexicographical order, your answer could be in any order you want.
 
 <!--more-->
 
@@ -62,3 +62,75 @@ public:
 
 ```
 
+
+```java
+class Solution {
+    private String[] letters = {"abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+    private List<String> ans = new ArrayList<>();
+    public List<String> letterCombinations(String digits) {
+        if (digits.length() == 0) return ans;
+        track(digits, 0, "");
+        return ans;
+    }
+
+    private void track(String digits, int index, String str) {
+        if (index == digits.length()) {
+            ans.add(str);
+            return;
+        }
+
+        int len = letters[digits.charAt(index) - '2'].length();
+        for (int j = 0; j < len; j++) {
+            track(digits, index + 1, str + letters[digits.charAt(index) - '2'].charAt(j));
+        }
+    }
+}
+```
+
+```java
+class Solution {
+    public List<String> letterCombinations(String digits) {
+        List<String> res = new ArrayList();
+        if (null == digits) {
+            return res;
+        }
+
+        int len = digits.length();
+        if (len == 0) {
+            return res;
+        }
+        Map<Character,String> phoneNumHash = new HashMap();
+        phoneNumHash.put('0', "");
+        phoneNumHash.put('1', "");
+        phoneNumHash.put('2', "abc");
+        phoneNumHash.put('3', "def");
+        phoneNumHash.put('4', "ghi");
+        phoneNumHash.put('5', "jkl");
+        phoneNumHash.put('6', "mno");
+        phoneNumHash.put('7', "pqrs");
+        phoneNumHash.put('8', "tuv");
+        phoneNumHash.put('9', "wxyz");
+
+        letterCombinations(digits, 0, res, "", phoneNumHash);
+        return res;
+    }
+
+    public void letterCombinations(String digits,int curIndex,List<String> res,String curStr,Map<Character,String> numHash){
+        if (curIndex == digits.length()) {
+            if (null != curStr && curStr.length() != 0) {
+                res.add(curStr);
+                return;
+            }
+        }
+
+        String numStr = numHash.get(digits.charAt(curIndex));
+        if (null == numStr) {
+            return;
+        }
+
+        for (int i = 0;i < numStr.length();i++) {
+            letterCombinations(digits, curIndex + 1, res, curStr + numStr.charAt(i), numHash);
+        }
+    }
+}
+```

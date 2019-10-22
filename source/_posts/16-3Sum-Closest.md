@@ -58,7 +58,7 @@ public:
 						tail--;//去除重复元素，类似15. 3Sum
 					}
 				}
-					
+
 			}
 		}
 		return sum;
@@ -66,3 +66,52 @@ public:
 };
 ```
 
+```java
+class Solution {
+    public int threeSumClosest(int[] nums, int target) {
+        if (null == nums) {
+            return 0;
+        }
+        int len = nums.length;
+        if (len == 0) {
+            return 0;
+        }
+        Arrays.sort(nums);
+        int minDis = Integer.MAX_VALUE;
+        int res = 0;
+
+        for (int i = 0;i < len - 2;i++) {
+            int curNum = nums[i];
+
+            int pre = i + 1;
+            int tail = len - 1;
+            while (pre < tail) {
+                int preNum = nums[pre];
+                int tailNum = nums[tail];
+
+                int sum = curNum + preNum + tailNum;
+                int dis = Math.abs(target - sum);
+
+                if (dis < minDis) {
+                    res = sum;
+                    minDis = dis;
+                }
+
+                if (target > sum) {
+                    pre++;
+                    while (pre < tail && nums[pre -1] == nums[pre]) {
+                        pre++;
+                    }
+                } else {
+                    tail--;
+                    while (pre < tail && nums[tail + 1] == nums[tail]) {
+                        tail--;
+                    }
+                }
+            }
+        }
+
+        return res;
+    }
+}
+```
