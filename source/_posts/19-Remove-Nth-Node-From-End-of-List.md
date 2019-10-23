@@ -66,3 +66,42 @@ ListNode* removeNthFromEnd(ListNode* head, int n) {
 
 ```
 
+```java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+        if (null == head) {
+            return head;
+        }
+
+        ListNode pre = head;
+        ListNode after = head;
+        while (n > 0 && null != pre) {
+            pre = pre.next;
+            n--;
+        }
+        if (null == pre) {
+            return head.next;
+        }
+        while (null != pre) {
+            pre = pre.next;
+            if (null != pre) {
+                after = after.next;
+            }
+        }
+
+        ListNode deleteNode = after.next;
+        after.next = deleteNode.next;
+        deleteNode.next = null;
+
+        return head;
+    }
+}
+```
