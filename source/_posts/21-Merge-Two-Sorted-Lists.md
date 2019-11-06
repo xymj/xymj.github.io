@@ -50,7 +50,8 @@ ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {
 	return tempHead;
 }
 ```
-
+---------------------------------------------------
+#### 　Java Code：
 ```java
 /**
  * Definition for singly-linked list.

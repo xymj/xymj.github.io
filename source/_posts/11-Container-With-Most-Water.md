@@ -46,6 +46,8 @@ public:
 };
 ```
 
+---------------------------------------------------
+#### 　Java Code：
 ```java
 class Solution {
     public int maxArea(int[] height) {

@@ -51,6 +51,8 @@ vector<string> generateParenthesis(int n) {
 }
 ```
 
+---------------------------------------------------
+#### 　Java Code：
 ```java
 class Solution {
     public List<String> generateParenthesis(int n) {

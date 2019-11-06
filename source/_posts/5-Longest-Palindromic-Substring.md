@@ -65,6 +65,8 @@ public:
 };
 ```
 
+---------------------------------------------------
+#### 　Java Code：
 ```java
 class Solution {
     public String longestPalindrome(String s) {

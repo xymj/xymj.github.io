@@ -54,6 +54,8 @@ public:
 };
 ```
 
+---------------------------------------------------
+#### 　Java Code：
 ``` java
 class Solution {
     public int lengthOfLongestSubstring(String s) {

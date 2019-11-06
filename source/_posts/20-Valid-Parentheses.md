@@ -52,6 +52,8 @@ public:
 };
 ```
 
+---------------------------------------------------
+#### 　Java Code：
 ```java
 class Solution {
     public boolean isValid(String s) {

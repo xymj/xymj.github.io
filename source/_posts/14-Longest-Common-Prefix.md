@@ -46,7 +46,8 @@ public:
 };
 ```
 
-
+---------------------------------------------------
+#### 　Java Code：
 ```java
 class Solution {
     public String longestCommonPrefix(String[] strs) {
