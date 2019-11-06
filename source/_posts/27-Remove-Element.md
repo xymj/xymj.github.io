@@ -81,8 +81,26 @@ public:
 				cnt++;
 			}
 		}
-		return cnt;//直接返回除去目标元素后剩下元素的个数，
+		return cnt;//直接返回除去目标元素后剩下元素的个数
 	}
 };
 ```
 
+```java
+class Solution {
+    public int removeElement(int[] nums, int val) {
+        if (null == nums) {
+            return 0;
+        }
+        int len = nums.length;
+        int count = 0;
+        for (int i = 0;i < len;i++) {
+            if (val != nums[i]) {
+                nums[count] = nums[i];
+                count++;
+            }
+        }
+        return count;
+    }
+}
+```

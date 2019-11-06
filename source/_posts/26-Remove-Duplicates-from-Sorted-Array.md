@@ -13,7 +13,7 @@ Do not allocate extra space for another array, you must do this in place with co
 For example,
 Given input array nums = [1,1,2],
 
-Your function should return length = 2, with the first two elements of nums being 1 and 2 respectively. It doesn't matter what you leave beyond the new length. 
+Your function should return length = 2, with the first two elements of nums being 1 and 2 respectively. It doesn't matter what you leave beyond the new length.
 
 <!--more-->
 
@@ -48,5 +48,25 @@ public:
 };
 ```
 
+```java
+class Solution {
+    public int removeDuplicates(int[] nums) {
+        if (null == nums) {
+            return 0;
+        }
+        int len = nums.length;
+        if (len <= 1) {
+            return len;
+        }
+        int slow = 0;
+        for (int i = 1;i < len;i++) {
+            if (nums[i] != nums[i - 1]) {//有序数组，比较相邻元素即可知道与前面是否相等
+                slow++;
+                nums[slow] = nums[i];
+            }
+        }
 
-
+        return slow + 1;
+    }
+}
+```

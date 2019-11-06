@@ -51,3 +51,31 @@ vector<string> generateParenthesis(int n) {
 }
 ```
 
+```java
+class Solution {
+    public List<String> generateParenthesis(int n) {
+        List<String> res = new ArrayList();
+        if (n == 0) {
+            return res;
+        }
+        if (n == 1) {
+            res.add("()");
+            return res;
+        }
+
+        List<String> preParenthesis = generateParenthesis(n - 1);
+        int size = preParenthesis.size();
+        for (int i = 0;i < size;i++) {
+            String tmp = preParenthesis.get(i);
+            for (int j = 0;j < tmp.length();j++) {
+                String tmpRes = new StringBuilder(tmp.substring(0, j))
+                    .append("()").append(tmp.substring(j, tmp.length())).toString();
+                res.add(tmpRes);
+            }
+
+        }
+
+        return res.stream().distinct().collect(Collectors.toList());
+    }
+}
+```

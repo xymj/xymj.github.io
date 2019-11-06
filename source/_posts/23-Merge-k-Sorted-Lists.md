@@ -65,7 +65,7 @@ ListNode* mergeKLists(vector<ListNode*>& lists) {
 	ListNode *newHead = NULL;
 	for (int i = 0; i < n; i++)
 	{
-		 newHead = mergeList(lists[i],newHead); 
+		 newHead = mergeList(lists[i],newHead);
 	}
 	return newHead;
 }
@@ -77,7 +77,7 @@ ListNode* mergeKLists(vector<ListNode*>& lists) {
 　　 建堆的时间复杂度是k/2logk, 每次取出堆顶再加入元素的复杂度是logk,假设每条链表平均有n个元素，则一共有nk-k次。因此总的时间复杂度为O(nklogk)。
 
 ```c++
- // 使用堆排序, 
+ // 使用堆排序,
 	// 1. 选出每个链表的头来插入小顶堆中，
 	// 2. 再把堆顶接入合并链表中，
 	// 3. 被选出的指针后移再加入小顶堆中,回到2
@@ -105,7 +105,7 @@ class Solution{
               if (heap[2 * index + 2]->val<heap[min]->val)//确定最小孩子节点索引
               {
                   min = 2 * index + 2;
-              }	
+              }
           }
           if (heap[index]->val<heap[min]->val)//如果根节点小于最小孩子节点，此子树已经是最小堆，直接结束
           {
@@ -170,7 +170,7 @@ class Solution{
           p = p->next;
           auto next = minHeap->next;
           if (next)
-              pushHeap2(heap,next);
+              pushHeap(heap,next);
           //creatHeap(heap);//这种重新再次构建最小堆会超时
       }
       return newHead.next;
@@ -179,3 +179,167 @@ class Solution{
 
 ```
 
+```java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+ //自己实现小顶堆，思想借鉴PriorityQueue源码
+class Solution {
+    private ListNode[] minHeap = null;
+    private int size = 0;
+    public ListNode mergeKLists(ListNode[] lists) {
+        if (null == lists) {
+            return null;
+        }
+
+        int len = lists.length;
+        if (len == 0) {
+            return null;
+        }
+        minHeap = new ListNode[len];
+        for (int i = 0; i < len;i++) {
+            if (null != lists[i]) {
+                minHeap[size] = lists[i];
+                size++;
+            }   
+        }
+        if (size == 0) {
+            return null;
+        }
+        heapify();
+        ListNode head = new ListNode(-1);
+        ListNode p = head;
+        while (size > 0) {
+            ListNode minNode = poll();
+            p.next = minNode;
+            minNode = minNode.next;
+            p = p.next;
+            p.next = null;
+            if (null != minNode) {
+                offer(minNode);
+            }
+        }
+        return head.next;
+    }
+
+    public void heapify() {
+        for (int i = (size >>> 1) - 1;i >= 0;i--) {
+            siftDown(i, minHeap[i]);
+        }
+    }
+
+    public void siftDown(int index, ListNode node) {
+        int half = size >>> 1;
+        while (index < half) {
+            int min = (index << 1) + 1;
+            ListNode child = minHeap[min];
+            int right = min + 1;
+            if (right < size && minHeap[right].val < child.val) {
+                child = minHeap[min = right];
+            }
+            if (child.val >= node.val) {
+                break;
+            }
+            minHeap[index] = child;
+            index = min;
+        }
+        minHeap[index] = node;
+    }
+
+    public void siftUp(int index, ListNode node) {
+        while (index > 0) {
+            int parent = (index - 1) >>> 1;
+            if (minHeap[parent].val <= node.val) {
+                break;
+            }
+            minHeap[index] = minHeap[parent];
+            index = parent;
+        }
+        minHeap[index] = node;
+    }
+
+    public ListNode poll() {
+        if (size == 0) {
+            return null;
+        }
+
+        ListNode minNode = minHeap[0];
+        int last = --size;
+        ListNode lastNode = minHeap[last];
+        minHeap[last] = null;
+        if (last != 0) {
+            siftDown(0, lastNode);
+        }
+        return minNode;
+    }
+
+    public void offer(ListNode node) {
+        if (size == 0) {
+            minHeap[0] = node;
+            size++;
+            return;
+        }
+        minHeap[size] = node;
+        siftUp(size, node);
+        size++;
+    }
+}
+```
+
+```java
+//直接使用Java自带的优先队列PriorityQueue
+class Solution {
+    public ListNode mergeKLists(ListNode[] lists) {
+        if (null == lists) {
+            return null;
+        }
+
+        int len = lists.length;
+        if (len == 0) {
+            return null;
+        }
+
+        List<ListNode> minHeap = new ArrayList();
+        for (int i = 0; i < len;i++) {
+            if (null != lists[i]) {
+                minHeap.add(lists[i]);
+            }   
+        }
+        if (minHeap.size() == 0) {
+            return null;
+        }
+        PriorityQueue<ListNode> queue = new PriorityQueue(minHeap.size(), new Comparator<ListNode>() {
+            @Override
+            public int compare(ListNode node1, ListNode node2) {
+                if (node1.val > node2.val) {
+                    return 1;
+                } else if (node1.val < node2.val) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            }
+        });
+        queue.addAll(minHeap);
+        ListNode head = new ListNode(-1);
+        ListNode p = head;
+        while (queue.size() > 0) {
+            ListNode minNode = queue.poll();
+            p.next = minNode;
+            minNode = minNode.next;
+            p = p.next;
+            p.next = null;
+            if (null != minNode) {
+                queue.offer(minNode);
+            }
+        }
+        return head.next;
+    }
+
+}
+```

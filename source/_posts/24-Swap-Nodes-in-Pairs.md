@@ -53,7 +53,7 @@ public:
     		p->next = q->next;
     		q->next = p;
     		temp->next = q;
-    
+
     		temp = p;
     		p = p->next;
     		if(p)
@@ -91,3 +91,59 @@ public:
 };
 ```
 
+```java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public ListNode swapPairs(ListNode head) {
+        if (null == head) {
+            return head;
+        }
+
+        ListNode tmpHead = new ListNode(-1);
+        ListNode tmp = tmpHead;
+
+        tmpHead.next = head;
+        ListNode cur = head;
+        while (null != cur && null != cur.next) {
+            ListNode p = cur.next;
+            tmp.next = p;
+
+            cur.next = p.next;
+            p.next = cur;
+
+            tmp = cur;
+            cur = cur.next;
+        }
+
+        return tmpHead.next;
+    }
+}
+```
+
+```java
+class Solution {
+    public ListNode swapPairs(ListNode head) {
+        if (null == head) {
+            return null;
+        }
+
+        if (null == head.next) {
+            return head;
+        }
+
+        ListNode tmp = head.next;
+        head.next = swapPairs(tmp.next);
+        tmp.next = head;
+
+        return tmp;
+
+    }
+}
+```
