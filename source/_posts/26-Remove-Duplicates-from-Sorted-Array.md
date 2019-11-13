@@ -48,6 +48,8 @@ public:
 };
 ```
 
+---------------------------------------------------
+#### 　Java Code：
 ```java
 class Solution {
     public int removeDuplicates(int[] nums) {

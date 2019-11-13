@@ -142,4 +142,55 @@ public:
 	}
 };
 ```
+---------------------------------------------------
+#### 　Java Code：
+```Java
+//性能好，须记住Java String中常用的API
+class Solution {
+    public int strStr(String haystack, String needle) {
+       return haystack.indexOf(needle);
+    }
+}
+```
 
+```Java
+class Solution {
+    public int strStr(String haystack, String needle) {
+        if (null == needle) {
+            return 0;
+        }
+        int needleLen = needle.length();
+        if (needleLen == 0) {
+            return 0;
+        }
+        if (null == haystack) {
+            return -1;
+        }
+        int hayLen = haystack.length();
+        if (hayLen == 0) {
+            return -1;
+        }
+        int count = -1;
+        for (int i = 0;i < hayLen;i++) {
+            char hayChar = haystack.charAt(i);
+            char neeChar = needle.charAt(0);
+            if (hayChar == neeChar) {
+                int j = 1;
+                while (j < needleLen && (i + j) < hayLen) {
+                    if (haystack.charAt(i + j) == needle.charAt(j)) {
+                        j++;
+                    } else {
+                        break;
+                    }
+                }
+                if (j == needleLen) {
+                    count = i;
+                    break;
+                }
+            }
+        }
+
+        return count;
+    }
+}
+```
