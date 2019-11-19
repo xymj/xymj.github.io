@@ -13,13 +13,13 @@ If the target is not found in the array, return [-1, -1].
 
 For example,
 Given [5, 7, 7, 8, 8, 10] and target value 8,
-return [3, 4]. 
+return [3, 4].
 
 <!--more-->
 
 ## 题意：
 
-　　给定一个按升序排序的整数数组，查找给定目标值的开始位置和结束位置。算法的运行时复杂性必须是O（log n）。如果数组中找不到目标，则返回[ 1，- 1 ]。
+　　给定一个按升序排序的整数数组，查找给定目标值的开始位置和结束位置。算法的运行时复杂性必须是O（log n）。如果数组中找不到目标，则返回[ -1，- 1 ]。
 
 ## 思路：
 
@@ -127,5 +127,44 @@ public:
 
 ```
 
+---------------------------------------------------
+#### 　Java Code：
+```Java
+class Solution {
+    public int[] searchRange(int[] nums, int target) {
+        int[] res = new int[]{-1,-1};
+        if (null == nums) {
+            return res;
+        }
 
+        int len = nums.length;
+        if (len == 0) {
+            return res;
+        }
 
+        int left = 0;
+        int right = len - 1;
+        while (left <= right) {
+            int mid = (left + right) / 2;
+            if (nums[mid] == target) {
+                int l = mid - 1;
+                int r = mid + 1;
+                while (l >= 0 && nums[l] == target) {
+                    l--;
+                }
+                while (r < len && nums[r] == target) {
+                    r++;
+                }
+                return new int[]{++l, --r};
+            }
+
+            if (nums[mid] < target) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+        return res;
+    }
+}
+```

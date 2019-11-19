@@ -36,7 +36,7 @@ int searchInsert(vector<int>& nums, int target) {
 			return count;
 		}
 		++it;
-		++count; 
+		++count;
 		if (it == nums.end()) {
 			nums.insert(it, target);
 			return count;
@@ -73,6 +73,41 @@ int searchInsert(vector<int>& nums, int target) {
 	}
 	nums.insert(nums.begin() + low, target);
 	return low;
+}
+```
+
+
+---------------------------------------------------
+#### 　Java Code：
+```Java
+class Solution {
+    public int searchInsert(int[] nums, int target) {
+        if (null == nums) {
+            return 0;
+        }
+
+        int len = nums.length;
+        if (len == 0) {
+            return 0;
+        }
+
+        int left = 0;
+        int right = len - 1;
+        while (left <= right) {
+            int mid = (left + right) / 2;
+            if (target == nums[mid]) {
+                return mid;
+            }
+
+            if (target < nums[mid]) {
+                right = mid - 1;
+            } else {
+                left = mid + 1;
+            }
+        }
+
+        return left;
+    }
 }
 ```
 

@@ -45,8 +45,7 @@ Coud you solve it without converting the integer to a string?
 
 
 
----------------------------------------------------
-#### 　Java Code：
+
 ```java
 class Solution {
     public boolean isPalindrome(int x) {

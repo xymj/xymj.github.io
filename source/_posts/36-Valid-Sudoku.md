@@ -20,7 +20,7 @@ Note :
 
 ## 题意：
 
-　　确定给出的九宫格是否一个有效的数独，数独谜题的根据：[规则](http://sudoku.com.au/TheRules.aspx)。数独板可能是部分元素填充，没填充的元素用字符“.”代替。 
+　　确定给出的九宫格是否一个有效的数独，数独谜题的根据：[规则](http://sudoku.com.au/TheRules.aspx)。数独板可能是部分元素填充，没填充的元素用字符“.”代替。
 　　**注意**　：一个有效的数独板（部分填充）不一定是可解的，只需要验证填充的单元格是否有效。　　
 
 ## 思路：
@@ -63,7 +63,7 @@ public:
     				else
     					colValid[board[j][i]-'0'] = 1;
     			}
-    			
+
     			if (board[i/3*3 + j/3][(i%3)*3 + j%3]!='.'&&board[i/3*3 + j/3][(i%3)*3 + j%3] - '0' >= 1&& board[i/3*3 + j/3][(i%3)*3 + j%3] - '0' <= 9)
     			{
     				//判断区域是否存在相同的元素,i表示第几个区域，j表示区域内的第几个元素,根据i和j确定在board中的元素
@@ -80,7 +80,7 @@ public:
     			rowValid[n] = 0;
     			colValid[n] = 0;
     			boardValid[n] = 0;
-    
+
     		}
     	}
     	return true;
@@ -88,3 +88,55 @@ public:
 };
 ```
 
+
+
+---------------------------------------------------
+#### 　Java Code：
+```Java
+class Solution {
+    public boolean isValidSudoku(char[][] board) {
+        if (null == board) {
+            return false;
+        }
+        for (int i = 0; i < 9; i++) {
+            int[] rowCheck = new int[10];
+            int[] colCheck = new int[10];
+            int[] boxCheck = new int[10];
+            for (int j = 0; j < 9; j++) {
+                if (board[i][j] != '.') {
+                    int rowNum = board[i][j] - '0';
+                    if (rowNum >= 1 && rowNum <= 9) {
+                        if (rowCheck[rowNum] == 1) {
+                            System.out.println("row");
+                            return false;
+                        } else {
+                            rowCheck[rowNum] = 1;
+                        }
+                    }
+                }
+                if (board[j][i] != '.') {
+                    int colNum = board[j][i] - '0';
+                    if (colNum >= 1 && colNum <= 9) {
+                        if (colCheck[colNum] == 1) {
+                            System.out.println("col");
+                            return false;
+                        } else {
+                            colCheck[colNum] = 1;
+                        }
+                    }
+                }
+                if (board[(i / 3) * 3 + j / 3][(i % 3) * 3 + j % 3] != '.') {
+                    int boxNum = board[(i / 3) * 3 + j / 3][(i % 3) * 3 + j % 3] - '0';
+                    if (boxNum >= 1 && boxNum <= 9) {
+                        if (boxCheck[boxNum] == 1) {
+                            return false;
+                        } else {
+                            boxCheck[boxNum] = 1;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
+```

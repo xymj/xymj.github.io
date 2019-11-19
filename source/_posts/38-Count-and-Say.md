@@ -15,7 +15,7 @@ The count-and-say sequence is the sequence of integers beginning as follows:
 21 is read off as "one 2, then one 1" or 1211.
 
 Given an integer n, generate the nth sequence.
-Note: The sequence of integers will be represented as a string. 
+Note: The sequence of integers will be represented as a string.
 
 <!--more-->
 
@@ -72,7 +72,7 @@ public:
 	string countAndSay(int n) {
 		string curr_str = "1"; //n为1的时候，字符串为1
 		for (int i = 0; i < n - 1; i++) { //对n-2序列的计数，就可以得到n-1的序列值（从零开始，n-1序列即使n的序列值）
-			string buffer; 
+			string buffer;
 			for (int j = 0; j < curr_str.size(); j++) {
 				int cnt = 0;
 				char ch = curr_str[j];
@@ -81,7 +81,7 @@ public:
 					cnt++;
 				}
 				buffer += (to_string(cnt) + ch);
-				j--; 
+				j--;
 			}
 			curr_str = buffer; // Update curr_str
 		}
@@ -90,3 +90,34 @@ public:
 };
 ```
 
+---------------------------------------------------
+#### 　Java Code：
+```Java
+class Solution {
+    public String countAndSay(int n) {
+        if (n == 1) {
+            return String.valueOf(1);
+        }
+        String preStr = countAndSay(n - 1);
+        int len = preStr.length();
+        int count = 0;
+        int i = 0;
+        char flag = preStr.charAt(0);
+        StringBuilder builder = new StringBuilder();
+        while (i < len) {
+            while (i < len && preStr.charAt(i) == flag) {
+                count++;
+                i++;
+            }
+            builder.append(count).append(flag);
+            if (i >= len) {
+                break;
+            }
+            flag = preStr.charAt(i);
+            count = 0;
+        }
+
+        return builder.toString();
+    }
+}
+```
