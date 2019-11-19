@@ -121,7 +121,7 @@
 <meta property="og:site_name" content="PikachuBLOG">
 <meta property="og:description" content="9.Palindrome NumberDetermine whether an integer is a palindrome. An integer is a palindrome when it reads the same backward as forward. Example 1: Input: 121 Output: true Example 2: Input: -121 Output">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-11-06T16:00:23.951Z">
+<meta property="og:updated_time" content="2019-11-19T15:07:14.904Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="9.Palindrome Number">
 <meta name="twitter:description" content="9.Palindrome NumberDetermine whether an integer is a palindrome. An integer is a palindrome when it reads the same backward as forward. Example 1: Input: 121 Output: true Example 2: Input: -121 Output">
@@ -416,7 +416,7 @@
                   <span class="post-meta-item-text">字数统计</span>
                 
                 <span title="字数统计">
-                  300
+                  298
                 </span>
               
 
@@ -466,8 +466,7 @@
 <p>Coud you solve it without converting the integer to a string?</p>
 <a id="more"></a>
 <h2 id="题意："><a href="#题意：" class="headerlink" title="题意："></a>题意：</h2><p>　　判断一个整数是否是回文数。回文数是指正序（从左向右）和倒序（从右向左）读都是一样的整数。</p>
-<hr>
-<h4 id="Java-Code："><a href="#Java-Code：" class="headerlink" title="　Java Code："></a>　Java Code：</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isPalindrome</span><span class="params">(<span class="keyword">int</span> x)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// Special cases:</span></span><br><span class="line">        <span class="comment">// As discussed above, when x &lt; 0, x is not a palindrome.</span></span><br><span class="line">        <span class="comment">// Also if the last digit of the number is 0, in order to be a palindrome,</span></span><br><span class="line">        <span class="comment">// the first digit of the number also needs to be 0.</span></span><br><span class="line">        <span class="comment">// Only 0 satisfy this property.</span></span><br><span class="line">        <span class="keyword">if</span> (x &lt; <span class="number">0</span> || (x % <span class="number">10</span> == <span class="number">0</span> &amp;&amp; x != <span class="number">0</span>)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> rightNum = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (x &gt; rightNum) &#123;</span><br><span class="line">            <span class="keyword">int</span> digit = x % <span class="number">10</span>;</span><br><span class="line">            x /= <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line">            rightNum = rightNum * <span class="number">10</span> + digit;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// When the length is an odd number, we can get rid of the middle digit by revertedNumber/10</span></span><br><span class="line">        <span class="comment">// For example when the input is 12321, at the end of the while loop we get x = 12, revertedNumber = 123,</span></span><br><span class="line">        <span class="comment">// since the middle digit doesn't matter in palidrome(it will always equal to itself), we can simply get rid of it.</span></span><br><span class="line">        <span class="keyword">return</span> x == rightNum || x == rightNum / <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isPalindrome</span><span class="params">(<span class="keyword">int</span> x)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// Special cases:</span></span><br><span class="line">        <span class="comment">// As discussed above, when x &lt; 0, x is not a palindrome.</span></span><br><span class="line">        <span class="comment">// Also if the last digit of the number is 0, in order to be a palindrome,</span></span><br><span class="line">        <span class="comment">// the first digit of the number also needs to be 0.</span></span><br><span class="line">        <span class="comment">// Only 0 satisfy this property.</span></span><br><span class="line">        <span class="keyword">if</span> (x &lt; <span class="number">0</span> || (x % <span class="number">10</span> == <span class="number">0</span> &amp;&amp; x != <span class="number">0</span>)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> rightNum = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (x &gt; rightNum) &#123;</span><br><span class="line">            <span class="keyword">int</span> digit = x % <span class="number">10</span>;</span><br><span class="line">            x /= <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line">            rightNum = rightNum * <span class="number">10</span> + digit;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// When the length is an odd number, we can get rid of the middle digit by revertedNumber/10</span></span><br><span class="line">        <span class="comment">// For example when the input is 12321, at the end of the while loop we get x = 12, revertedNumber = 123,</span></span><br><span class="line">        <span class="comment">// since the middle digit doesn't matter in palidrome(it will always equal to itself), we can simply get rid of it.</span></span><br><span class="line">        <span class="keyword">return</span> x == rightNum || x == rightNum / <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -597,7 +596,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">163</span>
+                <span class="site-state-item-count">164</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -699,7 +698,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#9-Palindrome-Number"><span class="nav-number">1.</span> <span class="nav-text">9.Palindrome Number</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#题意："><span class="nav-number">1.1.</span> <span class="nav-text">题意：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Java-Code："><span class="nav-number">1.1.0.1.</span> <span class="nav-text">　Java Code：</span></a></li></ol></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#9-Palindrome-Number"><span class="nav-number">1.</span> <span class="nav-text">9.Palindrome Number</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#题意："><span class="nav-number">1.1.</span> <span class="nav-text">题意：</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -740,7 +739,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共113.5k字</span>
+  <span class="post-count">博客全站共115.4k字</span>
 </div>
 
 <div class="powered-by">
