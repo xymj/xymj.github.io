@@ -65,3 +65,80 @@ public:
 };
 ```
 
+---------------------------------------------------
+#### 　Java Code：
+```Java
+class Solution {
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        if (null == candidates) {
+            return new ArrayList();
+        }
+
+        int len = candidates.length;
+        if (0 == len) {
+            return new ArrayList();
+        }
+
+        Arrays.sort(candidates);
+        List<Integer> sumElements = new ArrayList();
+        List<List<Integer>> res = new ArrayList();
+        getCombinations(candidates, 0, 0, target, sumElements, res);
+        return res;
+    }
+
+    public void getCombinations(int[] candidates, int index, int sum, int target,
+                                List<Integer> sumElements, List<List<Integer>> res) {
+        if (sum == target) {
+            res.add(sumElements);
+            return;
+        }
+
+        for (int i = index; i < candidates.length; i++) {
+            if (sum + candidates[i] > target) {
+                break;
+            }
+            List<Integer> tmpSumElements = new ArrayList(sumElements);//直接在进入下一层的时候复制结果集，减少退出下一层递归时删除元素操作，而且往结果集里面添加的也是创建的结果组合副本
+            tmpSumElements.add(candidates[i]);
+            getCombinations(candidates, i, sum + candidates[i], target, tmpSumElements, res);
+        }
+    }
+}
+```
+
+```Java
+class Solution {
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        if (null == candidates) {
+            return new ArrayList();
+        }
+
+        int len = candidates.length;
+        if (0 == len) {
+            return new ArrayList();
+        }
+
+        Arrays.sort(candidates);
+        List<Integer> sumElements = new ArrayList();
+        List<List<Integer>> res = new ArrayList();
+        getCombinations(candidates, 0, 0, target, sumElements, res);
+        return res;
+    }
+
+    public void getCombinations(int[] candidates, int index, int sum, int target,
+                                List<Integer> sumElements, List<List<Integer>> res) {
+        if (sum == target) {
+            res.add(sumElements.stream().collect(Collectors.toList()));//res内存的是sumElements的地址，后面删除会影响结果集，所以要从新构建一个新的组合结果放到结果集里面
+            return;
+        }
+
+        for (int i = index; i < candidates.length; i++) {
+            if (sum + candidates[i] > target) {
+                break;
+            }
+            sumElements.add(candidates[i]);
+            getCombinations(candidates, i, sum + candidates[i], target, sumElements, res);
+            sumElements.remove(Integer.valueOf(candidates[i]));//通过对象删除
+        }
+    }
+}
+```

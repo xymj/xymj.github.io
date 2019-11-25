@@ -112,3 +112,43 @@ public:
 	}
 };
 ```
+
+---------------------------------------------------
+#### 　Java Code：
+```Java
+class Solution {
+    public List<List<Integer>> permute(int[] nums) {
+        if (null == nums) {
+            return new ArrayList();
+        }
+
+        int len = nums.length;
+        if (len == 0) {
+            return new ArrayList();
+        }
+
+        int[] flag = new int[len];
+        List<Integer> resElement = new ArrayList();
+        List<List<Integer>> res = new ArrayList();
+        nextPermutations(nums, flag, 0, resElement, res);
+        return res;
+    }
+
+    public void nextPermutations(int[] nums, int[] flag, int n, List<Integer> resElement, List<List<Integer>> res) {
+        if (n == nums.length) {
+            res.add(resElement);
+            return;
+        }
+
+        for (int i = 0; i < nums.length; i++) {
+            if (flag[i] == 0) {
+                flag[i] = 1;
+                List<Integer> tmpResElement = new ArrayList(resElement);
+                tmpResElement.add(nums[i]);
+                nextPermutations(nums, flag, n + 1, tmpResElement, res);
+                flag[i] = 0;
+            }
+        }
+    }
+}
+```

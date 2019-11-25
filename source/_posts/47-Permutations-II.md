@@ -77,3 +77,48 @@ public:
 };
 ```
 
+
+---------------------------------------------------
+#### 　Java Code：
+```Java
+class Solution {
+    public List<List<Integer>> permuteUnique(int[] nums) {
+        if (null == nums) {
+            return new ArrayList();
+        }
+
+        int len = nums.length;
+        if (len == 0) {
+            return new ArrayList();
+        }
+
+        Arrays.sort(nums);
+        List<List<Integer>> res = new ArrayList();
+        List<Integer> elements = new ArrayList();
+        int[] flag = new int[len];
+        nextPermutations(nums, flag, elements, res);
+
+        return res;
+    }
+
+    public void nextPermutations(int[] nums, int[] flag, List<Integer> elements, List<List<Integer>> res) {
+        if (elements.size() == nums.length) {
+            res.add(elements);
+            return;
+        }
+
+        for (int i = 0;i < nums.length;i++) {
+            if (flag[i] == 0) {
+                if (i > 0 && nums[i] == nums[i - 1] && flag[i - 1] == 1) {
+                    continue;
+                }
+                flag[i] = 1;
+                List<Integer> tmpElements = new ArrayList(elements);
+                tmpElements.add(nums[i]);
+                nextPermutations(nums, flag, tmpElements, res);
+                flag[i] = 0;
+            }
+        }
+    }
+}
+```

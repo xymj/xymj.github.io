@@ -36,7 +36,7 @@ A solution set is:
 
 ```c++
 class Solution {
-	
+
 public:
 	vector<vector<int>> res;
 	vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
@@ -65,10 +65,50 @@ public:
 					backtracking(candidates, target, i + 1, sum + candidates[i], sumNum);//此处索引i + 1取下一个元素，防止数组中一个元素取多次
 					sumNum.pop_back();
 				}
-				
+
 			}
 		}
 	}
 };
 ```
 
+---------------------------------------------------
+#### 　Java Code：
+```Java
+class Solution {
+    public List<List<Integer>> combinationSum2(int[] candidates, int target) {
+        if (null == candidates) {
+            return new ArrayList();
+        }
+        int len = candidates.length;
+        if (len == 0) {
+            return new ArrayList();
+        }
+
+        Arrays.sort(candidates);
+        List<List<Integer>> res = new ArrayList();
+        List<Integer> sumElements = new ArrayList();
+        getCombinations(candidates, target, 0, 0, sumElements, res);
+        return res;
+    }
+
+    public  void  getCombinations(int[] candidates, int target, int index, int sum, List<Integer> sumElements, List<List<Integer>> res){
+        if (sum == target) {
+            res.add(sumElements);
+            return;
+        }
+
+        for (int i = index; i < candidates.length; i++) {
+            if(i != index && candidates[i] == candidates[i - 1]) {
+                continue;
+            }
+            if (sum + candidates[i] > target) {
+                break;
+            }
+            List<Integer> tmpSumElements = new ArrayList(sumElements);
+            tmpSumElements.add(candidates[i]);
+            getCombinations(candidates, target, i + 1, sum + candidates[i], tmpSumElements, res);
+        }
+    }
+}
+```

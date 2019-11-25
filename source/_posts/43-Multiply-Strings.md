@@ -80,3 +80,54 @@ public:
 
 ```
 
+---------------------------------------------------
+#### 　Java Code：
+```Java
+class Solution {
+    public String multiply(String num1, String num2) {
+        if (null == num1 || null == num2) {
+            return "";
+        }
+
+        int len1 = num1.length();
+        int len2 = num2.length();
+        if (len1 == 0 || len2 == 0) {
+            return "";
+        }
+
+        int resLen = len1 + len2;
+        int[] resArray = new int[resLen];
+        for (int i = 0; i < len2; i++) {
+            int v2 = num2.charAt(len2 - i - 1) - '0';
+            for (int j = 0; j < len1; j++) {
+                int v1 = num1.charAt(len1 - j - 1) - '0';
+                resArray[i + j] +=  v2 * v1;
+            }
+        }
+        if ("0".equals(num1) || "0".equals(num2)) {
+            return "0";
+        }
+
+        int carry = 0;
+        for (int k = 0; k < resLen; k++) {
+            int bitSum = carry + resArray[k];
+            resArray[k] = bitSum % 10;
+            carry = bitSum / 10;
+        }
+
+        StringBuilder builder = new StringBuilder();
+        int tail = resLen - 1;
+        while (tail >= 0) {
+            if (resArray[tail] != 0) {
+                break;
+            }
+            tail--;
+        }
+        while (tail >= 0) {
+            builder.append(resArray[tail]);
+            tail--;
+        }
+        return builder.toString();
+    }
+}
+```
