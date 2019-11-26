@@ -82,3 +82,39 @@ public:
 
 ```
 
+
+---------------------------------------------------
+#### 　Java Code
+```Java
+class Solution {
+    public List<List<String>> groupAnagrams(String[] strs) {
+        if (null == strs) {
+            return new ArrayList();
+        }
+
+        int len = strs.length;
+        if (len == 0) {
+            return new ArrayList();
+        }
+
+        Map<String, List<String>> resMap = new HashMap();
+        for (int i = 0;i < len;i++) {
+            String str = strs[i];
+            if (null == str) {
+                continue;
+            }
+            char[] chars = str.toCharArray();
+            Arrays.sort(chars);
+            String charStr = new String(chars);
+            List<String> values = resMap.get(charStr);
+            if (null == values || values.size() == 0) {
+                values = new ArrayList();
+                resMap.put(charStr, values);
+            }
+            values.add(str);
+        }
+
+        return resMap.values().stream().collect(Collectors.toList());
+    }
+}
+```

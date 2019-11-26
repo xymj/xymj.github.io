@@ -28,7 +28,7 @@ Follow up:
 ```c++
 
  // 顺时针反转
- // 先进上下中轴进行行行交换, 再进行关于左上到右下对角线对称轴进行交换 
+ // 先进上下中轴进行行行交换, 再进行关于左上到右下对角线对称轴进行交换
  * 1 2 3     7 8 9     7 4 1
  * 4 5 6  => 4 5 6  => 8 5 2
  * 7 8 9     1 2 3     9 6 3
@@ -41,7 +41,7 @@ void rotate(vector<vector<int> > &matrix) {
 }
 
  // 逆时针反转
- // 先进左右中轴进行列列交换, 再进行关于左上到右下对角线对称轴进行交换 
+ // 先进左右中轴进行列列交换, 再进行关于左上到右下对角线对称轴进行交换
  * 1 2 3     3 2 1     3 6 9
  * 4 5 6  => 6 5 4  => 2 5 8
  * 7 8 9     9 8 7     1 4 7
@@ -77,3 +77,38 @@ public:
 
 ```
 
+---------------------------------------------------
+#### 　Java Code
+```Java
+class Solution {
+    public void rotate(int[][] matrix) {
+        if (null == matrix) {
+            return;
+        }
+
+        int row = matrix.length;
+        if (row == 0) {
+            return;
+        }
+        int col = matrix[0].length;
+
+        for (int i = 0;i < row;i++) {
+            for (int j = 0;j < i;j++) {
+                int tmp = matrix[i][j];
+                matrix[i][j] = matrix[j][i];
+                matrix[j][i] = tmp;
+            }
+        }
+
+        for (int j = 0;j < col / 2;j++) {
+            for (int i = 0;i < row;i++) {
+                int tmp = matrix[i][j];
+                matrix[i][j] = matrix[i][col - j - 1];
+                matrix[i][col - j - 1] = tmp;
+            }
+        }
+    }
+
+
+}
+```
