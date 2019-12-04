@@ -17,7 +17,7 @@ The string can contain additional characters after those that form the integral 
 If the first sequence of non-whitespace characters in str is not a valid integral number, or if no such sequence exists because either str is empty or it contains only whitespace characters, no conversion is performed.
 
 If no valid conversion could be performed, a zero value is returned.
-
+<!--more-->
 Note:
 
     Only the space character ' ' is considered as whitespace character.

@@ -57,3 +57,33 @@ public:
 };
 ```
 
+
+
+---------------------------------------------------
+#### 　Java Code
+```Java
+class Solution {
+    public int maxSubArray(int[] nums) {
+        if (null == nums) {
+            return 0;
+        }
+
+        int len = nums.length;
+        if (len == 0) {
+            return 0;
+        }
+
+        int res = Integer.MIN_VALUE;
+        int tmpRes = 0;
+        for(int i = 0;i < len;i++) {
+            tmpRes += nums[i];
+            res = Math.max(res, tmpRes);
+            if (tmpRes < 0) {
+                tmpRes = 0;
+            }
+        }
+
+        return res;
+    }
+}
+```

@@ -183,3 +183,45 @@ public:
 };
 ```
 
+
+---------------------------------------------------
+#### 　Java Code
+```Java
+class Solution {
+    public int totalNQueens(int n) {
+        if (n == 0) {
+            return 0;
+        }
+
+        int[] rowCheck = new int[n];
+        int res = placeQueens(n, 0, rowCheck);
+        return res;
+    }
+
+    public int placeQueens(int n, int row, int[] rowCheck) {
+        if (row == n) {
+            //res += 1;
+            return 1;
+        }
+
+        int res = 0;
+        for (int j = 0;j < n;j++) {
+            if (checkValid(row, j, rowCheck)) {
+                rowCheck[row] = j;
+                res += placeQueens(n, row + 1, rowCheck);
+            }
+        }
+        return res;
+    }
+
+    public boolean checkValid(int row, int col, int[] rowCheck) {
+        for (int i = 0;i < row;i++) {
+            if (rowCheck[i] == col || Math.abs(row - i) == Math.abs(rowCheck[i] - col)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
+```

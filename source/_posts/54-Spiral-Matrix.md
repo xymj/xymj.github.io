@@ -16,7 +16,7 @@ Given the following matrix:
 　　[ 4, 5, 6 ],
 　　[ 7, 8, 9 ]
 ]
-You should return [1,2,3,6,9,8,7,4,5]. 
+You should return [1,2,3,6,9,8,7,4,5].
 
 <!--more-->
 
@@ -141,4 +141,64 @@ public:
 		return res;
 	}
 };
+```
+
+
+---------------------------------------------------
+#### 　Java Code
+```Java
+class Solution {
+    public List<Integer> spiralOrder(int[][] matrix) {
+        List<Integer> res = new ArrayList();
+        if (null == matrix) {
+            return res;
+        }
+
+        int m = matrix.length;
+        if (m == 0) {
+            return res;
+        }
+        int n = matrix[0].length;
+
+        int[][] flag = new int[m][n];
+        int i = 0;
+        int j = 0;
+        while (i < m && j < n && flag[i][j] == 0) {
+            while (j < n && flag[i][j] == 0) {
+                res.add(matrix[i][j]);
+                flag[i][j] = 1;
+                j++;
+            }
+            j--;
+            i++;
+
+            while (i < m && flag[i][j] == 0) {
+                res.add(matrix[i][j]);
+                flag[i][j] = 1;
+                i++;
+            }
+            i--;
+            j--;
+
+
+            while (j >= 0 && flag[i][j] == 0) {
+                res.add(matrix[i][j]);
+                flag[i][j] = 1;
+                j--;
+            }
+            j++;
+            i--;
+
+            while (i >= 0 && flag[i][j] == 0) {
+                res.add(matrix[i][j]);
+                flag[i][j] = 1;
+                i--;
+            }
+            i++;
+            j++;
+        }
+
+        return res;
+    }
+}
 ```

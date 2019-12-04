@@ -36,7 +36,7 @@ There exist two distinct solutions to the 4-queens puzzle:
 　　求解N皇后问题是算法中回溯法应用的一个经典案例, 回溯算法也叫试探法，它是一种系统地搜索问题的解的方法。回溯算法的基本思想是：从一条路往前走，能进则进，不能进则退回来，换一条路再试。  
 　　在现实中，有很多问题往往需要我们把其所有可能穷举出来，然后从中找出满足某种要求的可能或最优的情况，从而得到整个问题的解。回溯算法就是解决这种问题的“通用算法”，有“万能算法”之称。N皇后问题在N增大时就是这样一个解空间很大的问题，所以比较适合用这种方法求解。这也是N皇后问题的传统解法。
 
-  
+
 
 
 ```markdown
@@ -51,8 +51,8 @@ There exist two distinct solutions to the 4-queens puzzle:
         以上返回到第2步
    4) 在当前位置上不满足条件的情形：
         若当前列不是最后一列，当前列设为下一列，返回到第2步;
-        若当前列是最后一列了，回溯，即，若当前行已经是第一行了，算法退出，否则，清空当前行及以下各行的棋盘，然后，当前行设为上一行，当前列设为当前行的下一个待测位置，返回到第2步; 
-        
+        若当前列是最后一列了，回溯，即，若当前行已经是第一行了，算法退出，否则，清空当前行及以下各行的棋盘，然后，当前行设为上一行，当前列设为当前行的下一个待测位置，返回到第2步;
+
 	算法的基本原理是上面这个样子，但不同的是用的数据结构不同，检查某个位置是否满足条件的方法也不同。为了提高效率，有各种优化策略，如多线程，多分配内存表示棋盘等。
 	在具体解决该问题时，可以将其拆分为几个小问题。首先就是在棋盘上如何判断两个皇后是否能够相互攻击，使用一个一维数组来存储棋盘，在某个位置上是否有皇后可以相互攻击的判断也很简单。
 具体细节如下：
@@ -69,12 +69,12 @@ void queen(int row)
 {
      if (n == row)      //如果已经找到结果，则打印结果
       	print_result();
-     else 
+     else
      {
-       for (k=0 to N) 
+       for (k=0 to N)
        { //试探第row行每一个列
-         if (can_place(row, k) 
-         { 
+         if (can_place(row, k)
+         {
            place(row, k);   //放置皇后
            queen(row + 1);  //继续探测下一行
          }
@@ -165,7 +165,7 @@ public:
 		*/
 		vector<int> check(n, INT_MIN);
 		int i = 0, j = 0;
-		while (i<n) 
+		while (i<n)
 		{
 			while (j<n)// 对i行的每一列进行探测，看是否可以放置皇后
 			{
@@ -186,7 +186,7 @@ public:
 				{
 					break;
 				}
-				else //没有找到可以放置皇后的列，此时就应该回溯 
+				else //没有找到可以放置皇后的列，此时就应该回溯
 				{
 					i--;
 					j = check[i] + 1;//把上一行皇后的位置往后移一列  
@@ -208,7 +208,7 @@ public:
 				check[i] = INT_MIN;//清除最后一行的皇后位置  
 				continue;
 			}
-			i++;  //继续探测下一行的皇后位置 
+			i++;  //继续探测下一行的皇后位置
 		}
 		return res;
 	}
@@ -273,4 +273,58 @@ public:
 };
 ```
 
-### 
+---------------------------------------------------
+#### 　Java Code
+```Java
+class Solution {
+    public List<List<String>> solveNQueens(int n) {
+
+        List<List<String>> res = new ArrayList();
+        if (n == 0) {
+            return res;
+        }
+
+        int[] rowCheck = new int[n];//下标索引代表行，索引对应的值代表列
+
+        placeQueens(res, n, 0, rowCheck);
+
+        return res;
+    }
+
+    public void placeQueens(List<List<String>> res, int n, int row, int[] rowCheck) {
+        if (row == n) {
+            List<String> tmp = new ArrayList();
+            //char[][] tmpRes = new char[n][n];
+            char[] tmpRowRes = new char[n];
+            Arrays.fill(tmpRowRes, '.');
+            //Arrays.fill(tmpRes, tmpRowRes);//这种里面存的是tmpRowRes引用，后面对一行的修改会影响所有
+            for (int i = 0;i < n;i++) {
+               StringBuilder builder = new StringBuilder(new String(tmpRowRes));
+               builder.replace(rowCheck[i], rowCheck[i] + 1, "Q");
+               tmp.add(builder.toString());
+            }
+
+            res.add(tmp);
+            return;
+
+        }
+
+        for (int j = 0;j < n;j++) {
+            if (checkValidPosition(row, j, rowCheck)) {
+                rowCheck[row] = j;
+                placeQueens(res, n, row + 1, rowCheck);
+            }
+        }
+    }
+
+    public boolean checkValidPosition(int row, int col, int[] rowCheck) {
+        for (int i = 0;i < row;i++) {
+            if (rowCheck[i] == col //同一列有queen冲突
+                || Math.abs(row - i) == Math.abs(rowCheck[i] - col)) { //对角线上有queen冲突
+                    return false;
+                }
+        }
+        return true;
+    }
+}
+```
