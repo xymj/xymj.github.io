@@ -67,3 +67,61 @@ public:
 };
 ```
 
+
+---------------------------------------------------
+### 　Java Code
+```Java
+class Solution {
+    public int[][] generateMatrix(int n) {
+        if (n == 0) {
+            return new int[0][0];
+        }
+
+        int[][] res = new int[n][n];
+        int left = 0;
+        int right = n - 1;
+        int up = 0;
+        int down = n - 1;
+        int element = 1;
+
+        while (true) {
+            for (int col = left; col <= right;col++) {
+                res[up][col] = element++;
+            }
+            up++;
+            if (up > down) {
+                break;
+            }
+
+
+            for (int row = up; row <= down;row++) {
+                res[row][right] = element++;
+            }
+            right--;
+            if (right < left) {
+                break;
+            }
+
+
+            for (int col = right; col >= left;col--) {
+                res[down][col] = element++;
+            }
+            down--;
+            if (down < up) {
+                break;
+            }
+
+
+            for (int row = down; row >= up;row--) {
+                res[row][left] = element++;
+            }
+            left++;
+            if (left > right) {
+                break;
+            }
+        }
+
+        return res;
+    }
+}
+```

@@ -68,3 +68,66 @@ class Solution{
 };
 ```
 
+---------------------------------------------------
+### 　Java Code
+```Java
+class Solution {
+
+    public int[][] merge(int[][] intervals) {
+        if (null == intervals) {
+            return null;
+        }
+
+        int row = intervals.length;
+        if (row == 0) {
+            return new int[0][0];
+        }
+
+        int col = intervals[0].length;
+
+        List<Interval> vals = new ArrayList();
+        for (int i = 0;i < row;i++) {
+            vals.add(new Interval(intervals[i][0], intervals[i][1]));
+        }
+
+        //Comparator.comparing()
+        List<Interval> sortVals = vals.stream()
+            .sorted(Comparator.comparingInt(Interval::getHead))
+            .collect(Collectors.toList());
+        List<Interval> resVals = new ArrayList();
+        Interval firstVal = sortVals.get(0);
+        for (Interval val : sortVals) {
+            if (firstVal.tail >= val.head) {
+                firstVal.tail = Math.max(firstVal.tail, val.tail);
+            } else {
+                resVals.add(firstVal);
+                firstVal = val;
+            }
+        }
+        resVals.add(firstVal);
+
+        int resSize = resVals.size();
+        int[][] res = new int[resSize][2];
+        for (int i = 0;i < resSize;i++) {
+            res[i][0] = resVals.get(i).head;
+            res[i][1] = resVals.get(i).tail;
+        }
+
+        return res;
+    }
+
+    class Interval {
+        public int head;
+        public int tail;
+
+        public Interval(int head, int tail) {
+            this.head = head;
+            this.tail = tail;
+        }
+
+        public int getHead() {
+            return head;
+        }
+    }
+}
+```

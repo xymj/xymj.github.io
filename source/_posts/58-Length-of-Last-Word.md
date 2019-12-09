@@ -15,7 +15,7 @@ Note: A word is defined as a character sequence consists of non-space characters
 
 For example,
 Given s = "Hello World",
-return 5. 
+return 5.
 
 <!--more-->
 
@@ -52,3 +52,34 @@ public:
 };
 ```
 
+---------------------------------------------------
+### 　Java Code
+```Java
+class Solution {
+    public int lengthOfLastWord(String s) {
+        if (null == s) {
+            return 0;
+        }  
+
+        int size = s.length();
+        if (size == 0) {
+            return 0;
+        }
+
+        int end = size - 1;
+        while (end >= 0 && s.charAt(end) == ' ') {
+            end--;
+        }
+        if (end < 0) {
+            return 0;
+        }
+
+        int start = end;
+        while (start >= 0 && s.charAt(start) != ' ') {
+            start--;
+        }
+
+        return end - start;
+    }
+}
+```

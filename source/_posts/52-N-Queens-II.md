@@ -185,7 +185,7 @@ public:
 
 
 ---------------------------------------------------
-#### 　Java Code
+### 　Java Code
 ```Java
 class Solution {
     public int totalNQueens(int n) {

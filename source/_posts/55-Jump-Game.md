@@ -13,7 +13,7 @@ Determine if you are able to reach the last index.
 
 For example:
 A = [2,3,1,1,4], return true.
-A = [3,2,1,0,4], return false. 
+A = [3,2,1,0,4], return false.
 
 <!--more-->
 
@@ -97,3 +97,35 @@ public:
 };
 ```
 
+
+---------------------------------------------------
+### 　Java Code
+```Java
+class Solution {
+    public boolean canJump(int[] nums) {
+        if (null == nums) {
+            return false;
+        }
+
+        int len = nums.length;
+        if (len == 0) {
+            return false;
+        }
+
+        int maxJumpDistance = 0;
+        for (int i = 0;i < len;i++) {
+            if (maxJumpDistance < i) {
+                return false;
+            }
+
+            if (maxJumpDistance >= len - 1) {
+                return true;
+            }
+
+            maxJumpDistance = Math.max(maxJumpDistance, nums[i] + i);
+        }
+
+        return true;
+    }
+}
+```

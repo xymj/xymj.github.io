@@ -73,3 +73,76 @@ public:
 	}
 };
 ```
+
+---------------------------------------------------
+### 　Java Code
+```Java
+class Solution {
+    public String getPermutation(int n, int k) {
+        if (n == 0) {
+            return "";
+        }
+
+        StringBuilder builder = new StringBuilder();
+        for (int i = 1;i <= n;i++) {
+            builder.append(i);
+        }
+
+        int index = 1;
+        String val = builder.toString();
+
+        while (index < k) {
+            val = nextPernutation(val);
+            index++;
+        }
+
+        return val;
+    }
+
+    public String nextPernutation(String val) {
+        char[] vals = val.toCharArray();
+        int len = vals.length;
+        int end = len - 1;
+        int flag = 0;
+        while (end > 0) {
+            int pre = vals[end - 1] - '0';
+            int after = vals[end] - '0';
+            if (pre < after) {
+                flag = end - 1;
+                break;
+            }
+            end--;
+        }
+
+        reverse(vals, flag + 1, len - 1);
+
+        int flagVal = vals[flag] - '0';
+        int cur = flag + 1;
+        while (cur < len) {
+            int curVal = vals[cur] - '0';
+            if (curVal > flagVal) {
+                break;
+            }
+            cur++;
+        }
+
+        swap(vals, flag, cur);
+
+        return new String(vals);
+    }
+
+    public void swap(char[] vals, int i, int j) {
+        char tmp = vals[i];
+        vals[i] = vals[j];
+        vals[j] = tmp;
+    }
+
+    public void reverse(char[] vals, int start, int end) {
+        while (start < end) {
+            swap(vals, start, end);
+            start++;
+            end--;
+        }
+    }
+}
+```

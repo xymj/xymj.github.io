@@ -274,7 +274,7 @@ public:
 ```
 
 ---------------------------------------------------
-#### 　Java Code
+### 　Java Code
 ```Java
 class Solution {
     public List<List<String>> solveNQueens(int n) {
