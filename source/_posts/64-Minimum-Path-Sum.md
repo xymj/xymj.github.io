@@ -51,7 +51,7 @@ public:
 };
 ```
 
-### 　方法一：
+### 　方法二：
 
 　　思路也是动态规划，但是与方法一不同点时好处就是利用新的一维数组来存储要求元素点从上边到来的路径值，没有改变原数组的值。
 
@@ -78,3 +78,40 @@ public:
 };
 ```
 
+
+```Java
+class Solution {
+    public int minPathSum(int[][] grid) {
+        if (null == grid) {
+            return 0;
+        }
+
+        int m = grid.length;
+        if (m == 0) {
+            return 0;
+        }
+
+        int n = grid[0].length;
+        if (n == 0) {
+            return 0;
+        }
+
+        int[][] res = new int[m][n];
+        res[0][0] = grid[0][0];
+        for (int i = 1;i < m;i++) {
+            res[i][0] = grid[i][0] + res[i - 1][0];
+        }
+        for (int j = 1;j < n;j++) {
+            res[0][j] = grid[0][j] + res[0][j - 1];
+        }
+
+        for (int i = 1;i < m;i++) {
+            for (int j = 1;j < n;j++) {
+                res[i][j] = Math.min(res[i - 1][j], res[i][j - 1]) + grid[i][j];
+            }
+        }
+
+        return res[m - 1][n - 1];
+    }
+}
+```

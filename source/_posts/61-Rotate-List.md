@@ -44,7 +44,7 @@ ListNode* rotateRight(ListNode* head, int k) {
 		pPre = p;
 		p = p->next;
 	}
-	pPre->next = head; 
+	pPre->next = head;
 	int distances = length - k % length;//k是右侧移动元素个数，总长减去得到尾指针移动步数
 	while (distances) {
 		pPre = pPre->next;
@@ -56,3 +56,53 @@ ListNode* rotateRight(ListNode* head, int k) {
 }
 ```
 
+---------------------------------------------------
+### 　Java Code
+```Java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public ListNode rotateRight(ListNode head, int k) {
+        if (null == head) {
+            return null;
+        }
+        int size = 0;
+        ListNode tmpHead = head;
+        while (null != tmpHead) {
+            tmpHead = tmpHead.next;
+            size++;
+        }
+        k %= size;
+
+        if (k == 0) {
+            return head;
+        }
+
+        int skipNum = size - k - 1;
+        ListNode rotateHead = head;
+        while (skipNum > 0) {
+            rotateHead = rotateHead.next;
+            skipNum--;
+        }
+
+        ListNode curNode = rotateHead;
+        rotateHead = rotateHead.next;
+        curNode.next = null;
+
+        ListNode curRotateHead = rotateHead;
+        while (null != curRotateHead.next) {
+             curRotateHead = curRotateHead.next;
+        }
+
+        curRotateHead.next = head;
+
+        return rotateHead;
+    }
+}
+```

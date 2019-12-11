@@ -41,3 +41,27 @@ public:
 };
 ```
 
+---------------------------------------------------
+### 　Java Code
+```Java
+class Solution {
+    public int uniquePaths(int m, int n) {
+        if (m == 0 || n == 0) {
+            return 0;
+        }
+
+        int[][] res = new int[m][n];
+        int[] vals = new int[n];
+        Arrays.fill(vals, 1);
+        Arrays.fill(res, vals);
+
+        for (int i = 1;i < m;i++) {
+            for (int j = 1;j < n;j++) {
+                res[i][j] = res[i - 1][j] + res[i][j - 1];
+            }
+        }
+
+        return res[m - 1][n - 1];
+    }
+}
+```
