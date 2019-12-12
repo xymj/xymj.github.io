@@ -12,13 +12,13 @@ Given two binary strings, return their sum (also a binary string).
 For example,
 a = "11"
 b = "1"
-Return "100". 
+Return "100".
 
 <!--more-->
 
 ## 题意：
 
-　　给定两个二进制字符串，返回它们的总和（和也是一个二进制字符串）。 
+　　给定两个二进制字符串，返回它们的总和（和也是一个二进制字符串）。
 
 ## 思路：
 
@@ -95,3 +95,72 @@ public:
 
 ```
 
+
+---------------------------------------------------
+### 　Java Code
+```Java
+class Solution {
+    public String addBinary(String a, String b) {
+        if (null == a || null == b) {
+            return "";
+        }
+
+        int aLen = a.length();
+        int bLen = b.length();
+        if (aLen == 0 || bLen == 0) {
+            return "";
+        }
+
+        int aIndex = aLen - 1;
+        int bIndex = bLen - 1;
+        int flag = 0;
+        StringBuilder builder = new StringBuilder();
+        while (aIndex >= 0 && bIndex >= 0) {
+            int sum = flag + charToInt(a.charAt(aIndex)) + charToInt(b.charAt(bIndex));
+            if (sum >= 2) {
+                builder.append(sum % 2);
+                flag = 1;
+            } else {
+                builder.append(sum);
+                flag = 0;
+            }
+            aIndex--;
+            bIndex--;
+        }
+
+        while (aIndex >= 0) {
+            int sum = flag + charToInt(a.charAt(aIndex));
+            if (sum == 2) {
+                builder.append(0);
+                flag = 1;
+            } else {
+                builder.append(sum);
+                flag = 0;
+            }
+            aIndex--;
+        }
+
+        while (bIndex >= 0) {
+            int sum = flag + charToInt(b.charAt(bIndex));
+            if (sum == 2) {
+                builder.append(0);
+                flag = 1;
+            } else {
+                builder.append(sum);
+                flag = 0;
+            }
+            bIndex--;
+        }
+
+        if (flag > 0) {
+            builder.append(flag);
+        }
+        return builder.reverse().toString();
+
+    }
+
+    public int charToInt(char c) {
+        return c - '0';
+    }
+}
+```

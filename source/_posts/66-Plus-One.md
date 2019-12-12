@@ -40,7 +40,7 @@ public:
 			{
 				remainder = 0;
 				digits[i] = val;
-			}	
+			}
 		}
 		if (remainder)
 		{
@@ -76,3 +76,41 @@ public:
 }
 ```
 
+
+---------------------------------------------------
+### 　Java Code
+```Java
+/**
+* 考虑太多，其实只是+1，判断和是否为10即可
+*/
+class Solution {
+    public int[] plusOne(int[] digits) {
+        if (null == digits) {
+            return null;
+        }
+
+        int n = digits.length;
+        int[] res = new int[n + 1];
+        int flag = 1;
+        for (int i = n - 1;i >= 0;i--) {
+            int sum = flag + digits[i];
+            if (sum >= 10) {
+                digits[i] = sum % 10;
+                flag = 1;
+            } else {
+                digits[i] = sum;
+                flag = 0;
+            }
+
+            res[i + 1] = digits[i];
+        }
+
+        if (flag == 0) {
+            return digits;
+        }
+
+        res[0] = flag;
+        return res;
+    }
+}
+```
