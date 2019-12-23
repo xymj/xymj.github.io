@@ -116,3 +116,60 @@ public:
 };
 ```
 
+---------------------------------------------------
+### 　Java Code
+```Java
+class Solution {
+    public String simplifyPath(String path) {
+        if (null == path) {
+            return "";
+        }
+
+        int length = path.length();
+        if (length == 0) {
+            return "";
+        }
+
+        Stack<String> stack = new Stack();
+        int i = 0;
+        while (i < length) {
+            while (i < length && path.charAt(i) == '/') {
+                i++;
+            }
+
+            StringBuilder tmpDir = new StringBuilder();
+            while (i < length && path.charAt(i) != '/') {
+                tmpDir.append(path.charAt(i));
+                i++;
+            }
+
+            if ("..".equals(tmpDir.toString())) {
+                if (!stack.empty()) {
+                    stack.pop();
+                }
+                continue;
+            }
+
+            if (".".equals(tmpDir.toString()) || "".equals(tmpDir.toString())) {
+                continue;
+            }
+
+            stack.push(tmpDir.toString());
+        }
+
+        if (stack.empty()) {
+            return "/";
+        }
+
+        ArrayList<String> dirs = new ArrayList();
+        dirs.addAll(stack);
+        StringBuilder result = new StringBuilder();
+        dirs.forEach(dir -> {
+            result.append("/").append(dir);
+        });
+
+
+        return result.toString();
+    }
+}
+```
