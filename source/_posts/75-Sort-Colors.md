@@ -11,7 +11,7 @@ Given an array with n objects colored red, white or blue, sort them so that obje
 Here, we will use the integers 0, 1, and 2 to represent the color red, white, and blue respectively.
 
 Note:
-You are not suppose to use the library's sort function for this problem. 
+You are not suppose to use the library's sort function for this problem.
 <!--more-->
 
 ## 题意：
@@ -136,4 +136,81 @@ void sortColors(vector<int> &nums) {
 	}
 }
 ```
+---------------------------------------------------
+### 　Java Code
+```Java
+class Solution {
+    public void sortColors(int[] nums) {
+       if (null == nums) {
+           return;
+       }
 
+       int n = nums.length;
+       if (n == 0) {
+           return;
+       }
+
+       int low = 0, mid = 0, hight = n - 1;
+       while (mid <= hight) {
+           int cur = nums[mid];
+           if (cur == 0) {
+               swap(nums, low, mid);
+               low++;
+               mid++;
+           } else if (cur == 1) {
+               mid++;
+           } else {
+               swap(nums, mid, hight);
+               hight--;
+           }
+       }
+    }
+
+    public void swap(int[] nums, int i, int j) {
+        int tmp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = tmp;
+    }
+}
+```
+
+```Java
+class Solution {
+    public void sortColors(int[] nums) {
+        if (null == nums) {
+           return;
+        }
+
+        int n = nums.length;
+        if (n == 0) {
+            return;
+        }
+        quickSort(nums, 0, n - 1);
+    }
+
+    public void quickSort(int[] nums, int left, int right) {
+        if (left < right) {
+            int mid = getPartition(nums, left, right);
+            quickSort(nums, left, mid - 1);
+            quickSort(nums, mid + 1, right);
+        }
+    }
+
+    public int getPartition(int[] nums, int left, int right) {
+        int flagVal = nums[left];
+        while (left < right) {
+            while (left < right && nums[right] >= flagVal) {
+                right--;
+            }
+            nums[left] = nums[right];
+
+            while (left < right && nums[left] < flagVal) {
+                left++;
+            }
+            nums[right] = nums[left];
+        }
+        nums[left] = flagVal;
+        return left;
+    }
+}
+```

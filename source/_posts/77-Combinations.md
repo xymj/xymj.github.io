@@ -172,7 +172,64 @@ public:
 		}
 		return res;
 	}
-	
+
 };
 ```
 
+---------------------------------------------------
+### 　Java Code
+```Java
+class Solution {
+    public List<List<Integer>> combine(int n, int k) {
+       if (n == 0 || k == 0) {
+           return new ArrayList();
+       }
+       List<List<Integer>> res = new ArrayList();
+
+       getCombine(n, 0, k, new Integer[k], res);
+
+       return res;
+    }
+
+    public void getCombine(int n, int index, int k, Integer[] tmpRes, List<List<Integer>> res) {
+        if (0 == k) {
+            //如果tmpRes 类型是int[],那么Arrays.asList(Arrays.copyOf(tmpRes, tmpRes.length) 结果是List<int[]> ，不能满足结果要求，注意Arrays.asList和Arrays.copyOf的用法。
+            List<Integer> tmp = Arrays.asList(Arrays.copyOf(tmpRes, tmpRes.length));
+            res.add(tmp);
+            return;
+        }
+        for (int i = index;i < n - k + 1;i++) {
+            tmpRes[tmpRes.length - k] = i + 1;
+            getCombine(n, i + 1, k - 1, tmpRes, res);
+        }
+    }
+}
+```
+
+```Java
+class Solution {
+    public List<List<Integer>> combine(int n, int k) {
+       if (n == 0 || k == 0) {
+           return new ArrayList();
+       }
+       List<List<Integer>> res = new ArrayList();
+       List<Integer> tmpRes = new ArrayList();
+
+       getCombine(n, 0, k, tmpRes, res);
+
+       return res;
+    }
+
+    public void getCombine(int n, int index, int k, List<Integer> tmpRes, List<List<Integer>> res) {
+        if (tmpRes.size() == k) {
+            res.add(tmpRes);
+            return;
+        }
+        for (int i = index;i < n;i++) {
+            List<Integer> tmp = new ArrayList(tmpRes);
+            tmp.add(i + 1);
+            getCombine(n, i + 1, k, tmp, res);
+        }
+    }
+}
+```

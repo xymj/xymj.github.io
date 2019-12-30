@@ -68,3 +68,47 @@ public:
 };
 ```
 
+---------------------------------------------------
+### 　Java Code
+```Java
+class Solution {
+    public boolean searchMatrix(int[][] matrix, int target) {
+        if (null == matrix) {
+            return false;
+        }
+        int m = matrix.length;
+        if (0 == m) {
+            return false;
+        }
+        int n = matrix[0].length;
+        if (0 == n) {
+            return false;
+        }
+
+        int row = 0;
+        while (row < m) {
+            if (matrix[row][n - 1] >= target) {
+                break;
+            }
+            row++;
+        }
+        if (row == m) {
+            return false;
+        }
+        int left = 0;
+        int right = n - 1;
+        while (left <= right) {
+            int mid = (left + right) / 2;
+            int cur = matrix[row][mid];
+            if (cur == target) {
+                return true;
+            } else if (cur < target) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+        return false;
+    }
+}
+```
