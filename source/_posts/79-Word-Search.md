@@ -183,3 +183,75 @@ public:
 };
 ```
 
+
+
+---------------------------------------------------
+### 　Java Code
+```Java
+class Solution {
+    public boolean exist(char[][] board, String word) {
+       if (null == board) {
+           return false;
+       }
+
+       int rowLen = board.length;
+       if (rowLen == 0) {
+           return false;
+       }
+       int colLen = board[0].length;
+       if (colLen == 0) {
+           return false;
+       }
+
+       if (null == word) {
+           return false;
+       }
+       int wordSize = word.length();
+       if (wordSize == 0) {
+           return false;
+       }
+
+       for (int i = 0;i < rowLen;i++) {
+           for (int j = 0;j < colLen;j++) {
+               if (board[i][j] == word.charAt(0)) {
+                   if(backtracking(board, word, 0, i, j, rowLen, colLen)) {//不成功需要找下一个和首字符匹配的坐标
+                       return true;
+                   }
+               }
+           }
+       }
+
+       return false;
+    }
+
+    public boolean backtracking(char[][] board, String word, int wordIndex, int row, int col, int rowLen, int colLen) {
+        if (wordIndex == word.length()) {
+            return true;
+        }
+
+        if (row < 0 || row >= rowLen || col < 0 || col >= colLen) {
+            return false;
+        }
+
+        char c = word.charAt(wordIndex);
+        if (board[row][col] == c) {
+            board[row][col] = '#';
+            if (backtracking(board, word, wordIndex + 1, row + 1, col, rowLen, colLen)) {
+                return true;
+            }
+            if (backtracking(board, word, wordIndex + 1, row, col + 1, rowLen, colLen)) {
+                return true;
+            }
+            if (backtracking(board, word, wordIndex + 1, row - 1, col, rowLen, colLen)) {
+                return true;
+            }
+            if (backtracking(board, word, wordIndex + 1, row, col - 1, rowLen, colLen)) {
+                return true;
+            }
+            board[row][col] = c;
+        }
+
+        return false;
+    }
+}
+```

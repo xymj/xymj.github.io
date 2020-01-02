@@ -94,5 +94,42 @@ public:
 
 
 
+---------------------------------------------------
+### 　Java Code
+```Java
+class Solution {
+    public List<List<Integer>> subsets(int[] nums) {
+       List<List<Integer>> res = new ArrayList();
+       if (null == nums) {
+           return res;
+       }
 
+       int n = nums.length;
+       if (n == 0) {
+           return res;
+       }
 
+       for (int i = 0;i <= n;i++) {
+           List<Integer> subList = new ArrayList();
+           List<List<Integer>> tmpRes = new ArrayList();
+           getSubSet(nums, 0, i, subList, tmpRes);
+           res.addAll(tmpRes);
+       }
+
+       return res;
+    }
+
+    public void getSubSet(int[] nums, int index, int subSize, List<Integer> subList, List<List<Integer>> tmpRes) {
+        if (subSize == 0) {
+            tmpRes.add(subList);
+            return;
+        }
+
+        for (int i = index;i < (nums.length - subSize + 1);i++) {
+            List<Integer> tmpSubList = new ArrayList(subList);
+            tmpSubList.add(nums[i]);
+            getSubSet(nums, i + 1, subSize - 1, tmpSubList, tmpRes);
+        }
+    }
+}
+```
