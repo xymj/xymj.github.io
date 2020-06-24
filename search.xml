@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[LeetCode-CN 每日一题汇总]]></title>
+    <url>%2F2020%2F06%2F24%2Fleetcode-cn%2Fleetcode-cn-one-question-per-day%2F</url>
+    <content type="text"><![CDATA[2020-06 日期 题目 题解 24 16. 最接近的三数之和 排序 + 双指针]]></content>
+      <categories>
+        <category>LeetCode</category>
+      </categories>
+      <tags>
+        <tag>LeetCode</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[70. Climbing Stairs]]></title>
     <url>%2F2019%2F12%2F16%2F70-Climbing-Stairs%2F</url>
     <content type="text"><![CDATA[70. Climbing StairsYou are climbing a stair case. It takes n steps to reach to the top. Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?Note: Given n will be a positive integer. Example 1: Input: 2Output: 2Explanation: There are two ways to climb to the top. 1 step + 1 step 2 steps Example 2: Input: 3Output: 3Explanation: There are three ways to climb to the top. 1 step + 1 step + 1 step 1 step + 2 steps 2 steps + 1 step 题意：假设你正在爬楼梯。需要 n 阶你才能到达楼顶。 每次你可以爬 1 或 2 个台阶。你有多少种不同的方法可以爬到楼顶呢？ 注意：给定 n 是一个正整数。 思路： 简单的动态规划思想，每一阶楼梯踏上的次数等于n-1阶和n-2的次数之和。 123456789101112131415161718class Solution &#123; public int climbStairs(int n) &#123; if (n == 1 || n == 2) &#123; return n; &#125; //return climbStairs(n - 1) + climbStairs(n - 2);递归超时 //使用数组存储到达每阶楼梯的方法次数 int[] dp = new int[n + 1]; dp[1] = 1; dp[2] = 2; for (int i = 3;i &lt;= n;i++) &#123; dp[i] = dp[i - 1] + dp[i - 2]; &#125; return dp[n]; &#125;&#125;]]></content>
