@@ -25,6 +25,25 @@ Goog Good Study, Day Day Up......
 10| [309. 最佳买卖股票时机含冷冻期][6bca6544] | [动态规划(会用状态机状态转换的思想，对股票的收益和不同操作状态进行动态转换)][fa1c1940]  |  ☆ ☆ ☆ ☆ ☆
 11| [315. 计算右侧小于当前元素的个数][9eb494a7]| [归并排序计算逆序数 + 索引数组][daa48538]  [submissions][20118eb1] |  ☆ ☆ ☆ ☆ ☆
 12| [174. 地下城游戏][5288cad5]  | [动态规划(此题正向进行动态规划很难确定两个预期值的最优，采用逆向，从数组右下角开始)][88c6db87]  |  ☆ ☆ ☆ ☆ ☆
+13| [350. 两个数组的交集 II][b5f3f15e] | [排序 + 双指针，两数组排序后，根据各个数组指针所指值大小来移动求交集][8de02473] |  ☆ ☆
+14| [120. 三角形最小路径和][fc44f754]  | [动态规划(重点是从三角形的底部开始转移，到顶部结束，转移的过程中计算最小和)][72ec47df]  |  ☆ ☆ ☆
+15| [96. 不同的二叉搜索树][1a194028]  | [动态规划(当前节点数的不同二叉搜索数个数 = 左子树不同二叉搜索树个数 * 右子树不同二叉搜索树个数)][1bf529f5]  |   ☆ ☆ ☆
+16| [785. 判断二分图][7e129613]  | [节点染色 + 广度/深度优先搜索遍历图(二分图节点分为两种颜色红、绿，如果相邻节点颜色同时是红和绿，肯定不是二分图)][7506af74]  |  ☆ ☆ ☆ ☆
+17| [35. 搜索插入位置][aac30c0f]  | [二分查找][34c42412]  |  ☆
+18| [97. 交错字符串][e61901e0]  | [动态规划(定义 dp(i)(j) 表示s1​的前i个元素和s2​的前j个元素是否能交错组成s3​的前i+j 个元素)][760fd551]|   ☆ ☆ ☆ ☆ ☆
+19| [312. 戳气球][31c506da]  | [动态规划(def(i,j)函数的定义则为不戳破i与j，仅戳破i与j之间的气球我们能得到的最大金币数，如此划分状态转移方程def(i,j) = max{ def(i,k) + def(k,j)+nums\[i\]\[j\]\[k\]}\|i<k<j的实现,其中nums\[i\]\[j\]\[k\]为戳破气球k时我们能得到的金币数，因为def(i,j)表示戳破i到j之间的气球，自然包括k)][a178d2fb]  |  ☆ ☆ ☆ ☆ ☆ ☆
+20| [167. 两数之和 II - 输入有序数组][b14d7542]  |[ 双指针][4fbfd020]  |  ☆   
+21| [95. 不同的二叉搜索树 II][15aeb9c1]  | [递归(根据根节点，递归求解左右两边节点分别所能构的二叉搜索数集合，组合左右集合，构建当前根节点二叉搜索数)][29d2b07c]  |   ☆ ☆ ☆
+22| [剑指 Offer 11. 旋转数组的最小数字][d1c3ca0e]  |  [二分法(根据mid节点的值与right节点值大小的比较来移动left和right指针)][79c44736]  |  ☆ ☆
+23| [64. 最小路径和][8d44eb25]  | [动态规划][839d5e7d]  |  ☆ ☆
+24| [1025. 除数博弈][5850a1ff]  | [数学问题，递推找规律(N奇数的时候Alice（先手）必败，N为偶数的时候Alice必胜)][f6c1a0e1]  |  ☆ ☆
+25| [410. 分割数组的最大值][3f190060]  | [动态规划(dp\[i\]\[j\]表示将数组的前i个数分割为j段所能得到的最大连续子数组和的最小值)][54d569a1]   |  ☆ ☆ ☆ ☆ ☆
+26| [329. 矩阵中的最长递增路径][7976e98d]  | [记忆化深度优先搜索(需要有一个二维数组记录每个节点能走的最远路径大小)][80d272a7]  |   ☆ ☆ ☆ ☆ ☆
+27| [392. 判断子序列][b5e5b225]  |[ 双指针][d646d4c4]  |  ☆
+28| [104. 二叉树的最大深度][6f48a2d0]  | [递归][1fd2273a]   |   ☆
+29| [LCP 13. 寻宝][ef3b2276]  | [状态压缩动态规划(题解未看懂)][5620f3ca]  |  ☆ ☆ ☆ ☆ ☆ ☆ ☆
+30| [343. 整数拆分][42b1ab82]  | [动态规划(dp\[i\]表示将正整数i拆分成至少两个正整数的和之后，这些正整数的最大乘积。将i拆分成j和i−j的和，如果i−j不再拆分成多个正整数，此时的乘积是j×(i−j)；如果i−j继续拆分成多个正整数，此时的乘积是j×dp\[i−j\])][760c099f]   |  ☆ ☆ ☆ ☆
+31| [面试题 08.03. 魔术索引][08950398]  | [单次遍历判断索引和索引对应的元素值][bdb57086]  |  ☆
 
   [07f8cffe]: https://leetcode-cn.com/problems/maximum-length-of-repeated-subarray/ "最长重复子数组"
   [5f879b2e]: https://leetcode-cn.com/problems/maximum-length-of-repeated-subarray/solution/zui-chang-zhong-fu-zi-shu-zu-by-leetcode-solution/ "最长重复子数组题解"
@@ -63,9 +82,62 @@ Goog Good Study, Day Day Up......
   [5288cad5]: https://leetcode-cn.com/problems/dungeon-game/ "地下城游戏"
   [88c6db87]: https://leetcode-cn.com/problems/dungeon-game/solution/di-xia-cheng-you-xi-by-leetcode-solution/ "地下城游戏题解"
 
+  [b5f3f15e]: https://leetcode-cn.com/problems/intersection-of-two-arrays-ii/ "两个数组的交集 II"
+  [8de02473]: https://leetcode-cn.com/problems/intersection-of-two-arrays-ii/solution/liang-ge-shu-zu-de-jiao-ji-ii-by-leetcode-solution/ "两个数组的交集 II题解"
 
+  [fc44f754]: https://leetcode-cn.com/problems/triangle/ "三角形最小路径和"
+  [72ec47df]: https://leetcode-cn.com/submissions/detail/87563691/ "三角形最小路径和题解"
 
+  [1a194028]: https://leetcode-cn.com/problems/unique-binary-search-trees/ "不同的二叉搜索树"
+  [1bf529f5]: https://leetcode-cn.com/problems/unique-binary-search-trees/solution/bu-tong-de-er-cha-sou-suo-shu-by-leetcode-solution/ "不同的二叉搜索树题解"
 
+  [7e129613]: https://leetcode-cn.com/problems/is-graph-bipartite/ "判断二分图"
+  [7506af74]: https://leetcode-cn.com/problems/is-graph-bipartite/solution/pan-duan-er-fen-tu-by-leetcode-solution/ "判断二分图题解"
+
+  [aac30c0f]: https://leetcode-cn.com/problems/search-insert-position/ "搜索插入位置"
+  [34c42412]: https://leetcode-cn.com/problems/search-insert-position/solution/sou-suo-cha-ru-wei-zhi-by-leetcode-solution/ "搜索插入位置题解"
+
+  [e61901e0]: https://leetcode-cn.com/problems/interleaving-string/ "交错字符串"
+  [760fd551]: https://leetcode-cn.com/problems/interleaving-string/solution/jiao-cuo-zi-fu-chuan-by-leetcode-solution/ "交错字符串题解"
+
+  [31c506da]: https://leetcode-cn.com/problems/burst-balloons/ "戳气球"
+  [a178d2fb]: https://leetcode-cn.com/problems/burst-balloons/solution/chao-xiang-xi-hui-su-dao-fen-zhi-dao-dp-by-niu-you/ "戳气球题解"
+
+  [b14d7542]: https://leetcode-cn.com/problems/two-sum-ii-input-array-is-sorted/ "两数之和 II - 输入有序数组"
+  [4fbfd020]: https://leetcode-cn.com/problems/two-sum-ii-input-array-is-sorted/solution/liang-shu-zhi-he-ii-shu-ru-you-xu-shu-zu-by-leet-2/ "两数之和 II - 输入有序数组题解"
+
+  [15aeb9c1]: https://leetcode-cn.com/problems/unique-binary-search-trees-ii/ "不同的二叉搜索树 II"
+  [29d2b07c]: https://leetcode-cn.com/problems/unique-binary-search-trees-ii/solution/bu-tong-de-er-cha-sou-suo-shu-ii-by-leetcode-solut/ "不同的二叉搜索树 II题解"
+
+  [d1c3ca0e]: https://leetcode-cn.com/problems/xuan-zhuan-shu-zu-de-zui-xiao-shu-zi-lcof/ "旋转数组的最小数字"
+  [79c44736]: https://leetcode-cn.com/problems/xuan-zhuan-shu-zu-de-zui-xiao-shu-zi-lcof/solution/mian-shi-ti-11-xuan-zhuan-shu-zu-de-zui-xiao-shu-3/ "旋转数组的最小数字题解"
+
+  [8d44eb25]: https://leetcode-cn.com/problems/minimum-path-sum/ "最小路径和"
+  [839d5e7d]: https://leetcode-cn.com/problems/minimum-path-sum/solution/zui-xiao-lu-jing-he-by-leetcode-solution/ "最小路径和题解"
+
+  [5850a1ff]: https://leetcode-cn.com/problems/divisor-game/ "除数博弈"
+  [f6c1a0e1]: https://leetcode-cn.com/problems/divisor-game/solution/chu-shu-bo-yi-by-leetcode-solution/ "除数博弈题解"
+
+  [3f190060]: https://leetcode-cn.com/problems/split-array-largest-sum/ "分割数组的最大值"
+  [54d569a1]: https://leetcode-cn.com/problems/split-array-largest-sum/solution/fen-ge-shu-zu-de-zui-da-zhi-by-leetcode-solution/ "分割数组的最大值题解"
+
+  [7976e98d]: https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/ "矩阵中的最长递增路径"
+  [80d272a7]: https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/solution/ju-zhen-zhong-de-zui-chang-di-zeng-lu-jing-by-le-2/ "矩阵中的最长递增路径题解"
+
+  [b5e5b225]: https://leetcode-cn.com/problems/is-subsequence/ "判断子序列"
+  [d646d4c4]: https://leetcode-cn.com/problems/is-subsequence/solution/pan-duan-zi-xu-lie-by-leetcode-solution/ "判断子序列题解"
+
+  [6f48a2d0]: https://leetcode-cn.com/problems/maximum-depth-of-binary-tree/ "二叉树的最大深度"
+  [1fd2273a]: https://leetcode-cn.com/problems/maximum-depth-of-binary-tree/solution/er-cha-shu-de-zui-da-shen-du-by-leetcode-solution/ "二叉树的最大深度题解"
+
+  [ef3b2276]: https://leetcode-cn.com/problems/xun-bao/ "寻宝"
+  [5620f3ca]: https://leetcode-cn.com/problems/xun-bao/solution/xun-bao-bfs-dp-by-leetcode-solution/ "寻宝题解"
+
+  [42b1ab82]: https://leetcode-cn.com/problems/integer-break/ "整数拆分"
+  [760c099f]: https://leetcode-cn.com/problems/integer-break/solution/zheng-shu-chai-fen-by-leetcode-solution/ "整数拆分题解"
+
+  [08950398]: https://leetcode-cn.com/problems/magic-index-lcci/ "魔术索引"
+  [bdb57086]: https://leetcode-cn.com/submissions/detail/93428056/ "魔术索引题解"
 
 ---
 
